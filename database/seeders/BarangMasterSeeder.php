@@ -56,6 +56,15 @@ class BarangMasterSeeder extends Seeder
             'sumber_dana' => 'APBN',
         ]);
 
+        BarangMaster::create([
+            'nama_barang' => 'Sarung Tangan Steril',
+            'nomor_batch' => '23033503',
+            'kadaluarsa' => '2028-02-29',
+            'harga_satuan' => 6438,
+            'satuan' => 'Pasang',
+            'sumber_dana' => 'APBN',
+        ]);
+
     }
 }
 
