@@ -26,6 +26,36 @@ class BarangMasterSeeder extends Seeder
             'satuan' => 'Buah',
             'sumber_dana' => 'APBN',
         ]);
+
+        BarangMaster::create([
+            'nama_barang' => 'Masker (face mask)',
+            'nomor_batch' => '10022086',
+            'kadaluarsa' => '2050-01-31',
+            'harga_satuan' => 1200,
+            'satuan' => 'Buah',
+            'sumber_dana' => 'APBN',
+        ]);
+
+        
+        BarangMaster::create([
+            'nama_barang' => 'Povidone (lodine 30 ml)',
+            'nomor_batch' => '22052388',
+            'kadaluarsa' => '2026-04-30',
+            'harga_satuan' => 4551,
+            'satuan' => 'Buah',
+            'sumber_dana' => 'APBN',
+        ]);
+
+        
+        BarangMaster::create([
+            'nama_barang' => 'Asam Mefenamat 500 mg',
+            'nomor_batch' => 'TMECB30271',
+            'kadaluarsa' => '2025-03-31',
+            'harga_satuan' => 1400,
+            'satuan' => 'Buah',
+            'sumber_dana' => 'APBN',
+        ]);
+
     }
 }
 
