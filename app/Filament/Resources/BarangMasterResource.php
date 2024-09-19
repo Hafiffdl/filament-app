@@ -35,9 +35,13 @@ class BarangMasterResource extends Resource
                     ->required(),
 
                 TextInput::make('harga_satuan')
-                    ->label('Harga Satuan')
-                    ->numeric()
-                    ->required(),
+                ->dehydrateStateUsing(fn ($state) => str_replace(',', '.', str_replace('.', '', $state)))
+                ->reactive()
+                ->afterStateHydrated(function (TextInput $component, $state) {
+                    $component->state(number_format($state, 2, ',', '.'));
+                })
+                ->label('Harga Satuan')
+                ->required(),
 
                 TextInput::make('satuan')
                     ->label('Satuan')
@@ -62,7 +66,7 @@ class BarangMasterResource extends Resource
                 TextColumn::make('nama_barang')->label('Nama Barang')->sortable(),
                 TextColumn::make('nomor_batch')->label('Nomor Batch')->sortable(),
                 TextColumn::make('kadaluarsa')->label('Kadaluarsa')->sortable(),
-                TextColumn::make('harga_satuan')->label('Harga Satuan')->sortable(),
+                TextColumn::make('harga_satuan')->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))->label('Harga Satuan')->sortable(),
                 TextColumn::make('satuan')->label('Satuan')->sortable(),
                 TextColumn::make('sumber_dana')->label('Sumber Dana')->sortable(),
                 TextColumn::make('stock')->label('Stock')->sortable(),

@@ -14,6 +14,6 @@ class BarangMaster extends Model
     // Relasi ke BarangTransaksi
     public function barangTransaksis()
     {
-        return $this->hasMany(BarangTransaksi::class);
+        return $this->hasMany(barangTransaksi::class);
     }
 }

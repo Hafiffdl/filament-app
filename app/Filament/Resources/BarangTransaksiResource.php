@@ -24,6 +24,11 @@ class BarangTransaksiResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('faskes_id')
+                    ->relationship('faskes', 'nama')
+                    ->label('Faskes')
+                    ->required(),
+
                 Select::make('barang_master_id')
                     ->relationship('barangMaster', 'nama_barang')
                     ->label('Nama Barang')
@@ -36,13 +41,15 @@ class BarangTransaksiResource extends Resource
                             $set('nomor_batch', $barangMaster->nomor_batch);
                             $set('sumber_dana', $barangMaster->sumber_dana);
                             $set('satuan', $barangMaster->satuan);
-                            $set('stock', $barangMaster->stock); // Display stock
+                            $set('stock', $barangMaster->stock);
+                            $set('kadaluarsa', $barangMaster->kadaluarsa);
                         }
                     }),
 
                 TextInput::make('harga_satuan')
                     ->label('Harga Satuan')
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
 
                 TextInput::make('nomor_batch')
                     ->label('Nomor Batch')
@@ -72,11 +79,12 @@ class BarangTransaksiResource extends Resource
 
                 TextInput::make('total_harga')
                     ->label('Total Harga')
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
 
                 TextInput::make('stock')
                     ->label('Stock')
-                    ->disabled(), // Optionally show stock but disable editing
+                    ->disabled(),
             ]);
     }
 
@@ -84,13 +92,21 @@ class BarangTransaksiResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('faskes.nama')->label('Faskes')->sortable(),
                 TextColumn::make('barangMaster.nama_barang')->label('Nama Barang')->sortable(),
                 TextColumn::make('barangMaster.nomor_batch')->label('Nomor Batch')->sortable(),
                 TextColumn::make('kadaluarsa')->label('Kadaluarsa')->sortable(),
                 TextColumn::make('barangMaster.satuan')->label('Satuan')->sortable(),
                 TextColumn::make('barangMaster.sumber_dana')->label('Sumber Dana')->sortable(),
                 TextColumn::make('jumlah')->label('Jumlah')->sortable(),
-                TextColumn::make('total_harga')->label('Total Harga')->sortable(),
+                TextColumn::make('barangMaster.harga_satuan')
+                    ->label('Harga Satuan')
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // FormatbarangMaster. for display
+                TextColumn::make('total_harga')
+                    ->label('Total Harga')
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
             ])
             ->filters([])
             ->actions([Tables\Actions\EditAction::make()])
