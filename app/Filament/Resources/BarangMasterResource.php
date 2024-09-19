@@ -80,4 +80,6 @@ class BarangMasterResource extends Resource
             'edit' => Pages\EditBarangMaster::route('/{record}/edit'),
         ];
     }
+
+    
 }

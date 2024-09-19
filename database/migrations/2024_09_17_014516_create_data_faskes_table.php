@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('barang_transaksis', function (Blueprint $table) {
+        Schema::create('data_faskes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('barang_master_id')->constrained('barang_masters');
-            $table->integer('jumlah');
-            $table->decimal('total_harga', 10, 2);
-            $table->date('kadaluarsa');
             $table->timestamps();
         });
     }
@@ -26,12 +22,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('barang_transaksis');
+        Schema::dropIfExists('data_faskes');
 
-        Schema::table('barang_transaksis', function (Blueprint $table) {
+        Schema::table('data_faskes', function (Blueprint $table) {
             $table->string('nomor_batch'); // Pastikan ini tipe string
             $table->foreign('nomor_batch')->references('nomor_batch')->on('barang_masters')->onDelete('cascade');
         });
     }
 };
-

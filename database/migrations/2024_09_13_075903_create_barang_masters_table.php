@@ -24,6 +24,7 @@ return new class extends Migration
 
         });
     }
+    
 
     /**
      * Reverse the migrations.
@@ -31,5 +32,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('barang_masters');
+
+        Schema::table('barang_masters', function (Blueprint $table) {
+            $table->dropColumn('id'); // Hapus kolom id jika ada
+            $table->string('nomor_batch')->primary(); // Tetapkan nomor_batch sebagai primary key
+        });
+        
     }
+    
 };

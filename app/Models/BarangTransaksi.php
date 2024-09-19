@@ -11,9 +11,16 @@ class BarangTransaksi extends Model
 
     protected $fillable = ['barang_master_id', 'jumlah', 'total_harga', 'kadaluarsa'];
 
+   
     public function barangMaster()
     {
-        return $this->belongsTo(BarangMaster::class);
+        return $this->belongsTo(BarangMaster::class, 'nomor_batch', 'nomor_batch');
+    }
+
+    // Relasi ke DataFaskes
+    public function faskes()
+    {
+        return $this->belongsTo(DataFaskes::class, 'faskes_id');  // sesuaikan kolom foreign key
     }
 
     protected static function booted()
