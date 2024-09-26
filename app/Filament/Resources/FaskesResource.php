@@ -29,6 +29,11 @@ class FaskesResource extends Resource
                 ->required()
                 ->label('Alamat')
                 ->maxLength(255), // Set the maximum length if necessary
+
+            Forms\Components\TextInput::make('nama_penanggung_jawab')->label('Nama Penanggung Jawab')->required(),
+            Forms\Components\TextInput::make('nip_penanggung_jawab')->label('NIP Penanggung Jawab')->required(),
+            Forms\Components\TextInput::make('nama_pengurus_barang')->label('Nama Pengurus Barang')->required(),
+            Forms\Components\TextInput::make('nip_pengurus_barang')->label('NIP Pengurus Barang')->required(),
         ]);
     }
     public static function table(Tables\Table $table): Tables\Table
