@@ -11,24 +11,27 @@ class BarangTransaksi extends Model
     use HasFactory;
 
     protected $fillable = [
-        'faskes_id',
-        'barang_master_id',
-        'jumlah',
-        'total_harga',
-        'kadaluarsa',
-        'harga_satuan',
+        'faskes_id', 'barang_master_id', 'jumlah', 'total_harga', 'kadaluarsa', 'harga_satuan', 'tanggal_transaksi'
     ];
 
-    // Relationship to Faskes
     public function faskes()
     {
-        return $this->belongsTo(Faskes::class, 'faskes_id');
+        return $this->belongsTo(Faskes::class);
     }
 
-    // Relationship to BarangMaster
     public function barangMaster()
     {
         return $this->belongsTo(BarangMaster::class, 'barang_master_id');
+    }
+
+    public function suratKeluar()
+{
+    return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi');
+}
+
+    public function getDetailAttribute()
+    {
+        return "{$this->barangMaster->nama_barang} - Batch: {$this->barangMaster->nomor_batch}";
     }
 
     protected static function booted()

@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -45,6 +46,10 @@ class BarangTransaksiResource extends Resource
                             $set('kadaluarsa', $barangMaster->kadaluarsa);
                         }
                     }),
+
+                DatePicker::make('tanggal_transaksi')
+                    ->label('Tanggal Transaksi')
+                    ->required(),
 
                 TextInput::make('harga_satuan')
                     ->label('Harga Satuan')
@@ -99,6 +104,9 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('barangMaster.satuan')->label('Satuan')->sortable(),
                 TextColumn::make('barangMaster.sumber_dana')->label('Sumber Dana')->sortable(),
                 TextColumn::make('jumlah')->label('Jumlah')->sortable(),
+                TextColumn::make('tanggal_transaksi')
+                    ->label('Tanggal Transaksi')
+                    ->sortable(),
                 TextColumn::make('barangMaster.harga_satuan')
                     ->label('Harga Satuan')
                     ->sortable()
@@ -108,10 +116,11 @@ class BarangTransaksiResource extends Resource
                     ->sortable()
                     ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
             ])
+
             ->filters([])
             ->actions([Tables\Actions\EditAction::make()])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
-    }
+        }
 
     public static function getPages(): array
     {

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('jumlah');
             $table->decimal('total_harga', 10, 2);
             $table->date('kadaluarsa');
+            $table->date('tanggal_transaksi')->nullable();
             $table->timestamps();
         });
     }
