@@ -17,6 +17,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -39,6 +41,20 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make('Laporan')
+                    ->items([
+                        NavigationItem::make('Surat Keluar')
+                            ->icon('heroicon-o-document')
+                            ->url('/admin/reports/surat-keluar'),
+                        NavigationItem::make('Surat Serah Terima')
+                            ->icon('heroicon-o-document-duplicate')
+                            ->url('/admin/reports/surat-serah-terima'),
+                        NavigationItem::make('Surat Serah Terima RSUD')
+                            ->icon('heroicon-o-document-check')
+                            ->url('/admin/reports/surat-serah-terima-rsud'),
+                    ]),
             ])
             ->middleware([
                 EncryptCookies::class,
