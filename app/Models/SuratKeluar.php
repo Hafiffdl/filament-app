@@ -20,7 +20,9 @@ class SuratKeluar extends Model
         'kadaluarsa',
         'harga_satuan',
         'tanggal_transaksi',
-        'kode_faskes'
+        'kode_faskes',
+        'spmb_nomor',
+        'nama', 'alamat', 'nama_penanggung_jawab', 'nip_penanggung_jawab', 'nama_pengurus_barang', 'nip_pengurus_barang'
 
     ];
     protected $casts = [

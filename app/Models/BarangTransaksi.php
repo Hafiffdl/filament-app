@@ -16,7 +16,7 @@ class BarangTransaksi extends Model
 
     public function faskes()
     {
-        return $this->belongsTo(Faskes::class);
+        return $this->belongsTo(Faskes::class, 'faskes_id');
     }
 
     public function barangMaster()
@@ -24,10 +24,15 @@ class BarangTransaksi extends Model
         return $this->belongsTo(BarangMaster::class, 'barang_master_id');
     }
 
+    public function barangTransaksis()
+    {
+        return $this->hasMany(BarangTransaksi::class);
+    }
+
     public function suratKeluar()
-{
-    return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi');
-}
+    {
+        return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi');
+    }
 
     public function getDetailAttribute()
     {

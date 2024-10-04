@@ -27,7 +27,6 @@
             font-size: 14px;
             margin: 5px 0;
             text-align: center;
-            /* padding-left: 60px; */
         }
         .document-title {
             text-align: center;
@@ -148,10 +147,10 @@
     <div class="box-container">
         <div class="box-row">
             <div class="box-item">
-                <span class="box-label">BERDASARKAN SPMB NOMOR : 1215/BP.14.01</span>
+                <span class="box-label">BERDASARKAN SPMB NOMOR : {{ $suratKeluar->spmb_nomor }}</span>
             </div>
             <div class="box-item">
-                <span class="box-label">TANGGAL : 3 Juni 2024</span>
+                <span class="box-label">TANGGAL : {{ $suratKeluar->tanggal ? $suratKeluar->tanggal->format('d F Y') : 'N/A' }}</span>
             </div>
         </div>
         <div class="box-row">
@@ -175,17 +174,21 @@
 
     <table>
         <tr>
-            <th>NO</th>
-            <th>NAMA BARANG</th>
-            <th>JUMLAH</th>
-            <th>SATUAN</th>
+            <th rowspan="2">NO</th>
+            <th rowspan="2">NAMA BARANG</th>
+            <th rowspan="2">JUMLAH</th>
+            <th rowspan="2">SATUAN</th>
+            <th colspan="2" style="text-align: center;">SPESIFIKASI</th>
+            <th colspan="2" style="text-align: center;">HARGA</th>
+            <th rowspan="2">SUMBER DANA</th>
+            <th rowspan="2">TITIK PERMINTAAN DARURAT</th>
+            <th rowspan="2">TITIK STOK REALOKASI TERKINI</th>
+        </tr>
+        <tr>
             <th>NOMOR BATCH</th>
             <th>BATAS KADALUWARSA</th>
             <th>HARGA SATUAN</th>
             <th>TOTAL NILAI BARANG</th>
-            <th>SUMBER DANA</th>
-            <th>TITIK PERMINTAAN DARURAT</th>
-            <th>TITIK STOK REALOKASI TERKINI</th>
         </tr>
         @foreach($suratKeluar->barangTransaksis as $transaksi)
         <tr>
@@ -209,8 +212,8 @@
         </tr>
     </table>
 
-    <div class="signature" style="font-size: 20px;"> <!-- Increased font size -->
-    <table class="no-border" style="border: none; width: 100%;"> <!-- Set table width to 100% -->
+    <div class="signature" style="font-size: 20px;">
+    <table class="no-border" style="border: none; width: 100%;">
         <tr>
             <td>Jakarta Timur, ...........</td>
             <td></td>
@@ -219,14 +222,14 @@
         <tr>
             <td>Yang mengeluarkan<br>Bendahara Materiil</td>
             <td>Yang Mengangkut<br>Mengambil/Mengantar</td>
-            <td style="text-align: center;">Yang Menerima</td> <!-- Right-align the header -->
+            <td style="text-align: center;">Yang Menerima</td>
         </tr>
         <tr>
         <td>
-            <div style="height: 40px; width: 200px;"></div> <!-- Blank space using a div -->
+            <div style="height: 40px; width: 200px;"></div>
             </td>
             <td>
-                <div style="height: 40px; width: 200px;"></div> <!-- Blank space using a div -->
+                <div style="height: 40px; width: 200px;"></div>
             </td>
             <td style="text-align: right; padding-left: 0;">&nbsp;</td>
         </tr>
@@ -241,7 +244,7 @@
                 Pangkat: ..........................<br>
                 NIP: ................................
             </td>
-            <td style="text-align: center;"> <!-- Right-align the content -->
+            <td style="text-align: center;">
                 Nama: .............................<br>
                 Pangkat: ..........................<br>
                 NIP: ................................

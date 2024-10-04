@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('surat_keluar_barang_transaksi', function (Blueprint $table) {
-            $table->id(); // Tambahkan primary key
-            $table->foreignId('surat_keluar_id')->constrained('surat_keluar')->onDelete('cascade');
-            $table->foreignId('barang_transaksi_id')->constrained('barang_transaksi')->onDelete('cascade');
-            $table->timestamps(); // Tambahkan kolom timestamp
-        });
+        if (!Schema::hasTable('surat_keluar_barang_transaksi')) {
+            Schema::create('surat_keluar_barang_transaksi', function (Blueprint $table) {
+                $table->id(); // Tambahkan primary key
+                $table->foreignId('surat_keluar_id')->constrained('surat_keluar')->onDelete('cascade');
+                $table->foreignId('barang_transaksi_id')->constrained('barang_transaksi')->onDelete('cascade');
+                $table->timestamps(); // Tambahkan kolom timestamp
+            });
+        }
     }
 
     /**

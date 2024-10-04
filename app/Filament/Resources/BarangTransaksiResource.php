@@ -9,9 +9,9 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -28,64 +28,52 @@ class BarangTransaksiResource extends Resource
                 Select::make('faskes_id')
                     ->relationship('faskes', 'nama')
                     ->label('Faskes')
-                    ->required(),
-
-                Select::make('barang_master_id')
-                    ->relationship('barangMaster', 'nama_barang')
-                    ->label('Nama Barang')
                     ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        $barangMaster = BarangMaster::find($state);
-                        if ($barangMaster) {
-                            $set('harga_satuan', $barangMaster->harga_satuan);
-                            $set('nomor_batch', $barangMaster->nomor_batch);
-                            $set('sumber_dana', $barangMaster->sumber_dana);
-                            $set('satuan', $barangMaster->satuan);
-                            $set('stock', $barangMaster->stock);
-                            $set('kadaluarsa', $barangMaster->kadaluarsa);
-                        }
-                    }),
+                    ->searchable(),
 
                 DatePicker::make('tanggal_transaksi')
                     ->label('Tanggal Transaksi')
                     ->required(),
 
-                TextInput::make('harga_satuan')
-                    ->label('Harga Satuan')
-                    ->disabled()
-                    ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
+                // Repeater for multiple item inputs
+                Repeater::make('items')
+                    ->label('Transaksi Barang')
+                    ->relationship('barangTransaksis') // Define your relationship
+                    ->schema([
+                        Select::make('barang_master_id')
+                            ->relationship('barangMaster', 'nama_barang')
+                            ->label('Nama Barang')
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, $state) {
+                                $barangMaster = BarangMaster::find($state);
+                                if ($barangMaster) {
+                                    $set('harga_satuan', $barangMaster->harga_satuan);
+                                    $set('nomor_batch', $barangMaster->nomor_batch);
+                                    $set('sumber_dana', $barangMaster->sumber_dana);
+                                    $set('satuan', $barangMaster->satuan);
+                                    $set('stock', $barangMaster->stock);
+                                    $set('kadaluarsa', $barangMaster->kadaluarsa);
+                                }
+                            }),
 
-                TextInput::make('nomor_batch')
-                    ->label('Nomor Batch')
-                    ->disabled(),
+                        TextInput::make('jumlah')
+                            ->label('Jumlah')
+                            ->numeric()
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                $hargaSatuan = $get('harga_satuan');
+                                $set('total_harga', $state * $hargaSatuan);
+                            }),
 
-                DatePicker::make('kadaluarsa')
-                    ->label('Kadaluarsa')
-                    ->required(),
-
-                TextInput::make('satuan')
-                    ->label('Satuan')
-                    ->disabled(),
-
-                TextInput::make('sumber_dana')
-                    ->label('Sumber Dana')
-                    ->disabled(),
-
-                TextInput::make('jumlah')
-                    ->label('Jumlah')
-                    ->numeric()
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $hargaSatuan = $get('harga_satuan');
-                        $set('total_harga', $state * $hargaSatuan);
-                    }),
-
-                TextInput::make('total_harga')
-                    ->label('Total Harga')
-                    ->disabled()
-                    ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
+                        TextInput::make('total_harga')
+                            ->label('Total Harga')
+                            ->disabled()
+                            ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
+                    ])
+                    ->minItems(1) // Minimum of 1 item
+                    ->createItemButtonLabel('Tambah Barang'), // Label for adding new items
 
                 TextInput::make('stock')
                     ->label('Stock')
@@ -104,23 +92,20 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('barangMaster.satuan')->label('Satuan')->sortable(),
                 TextColumn::make('barangMaster.sumber_dana')->label('Sumber Dana')->sortable(),
                 TextColumn::make('jumlah')->label('Jumlah')->sortable(),
-                TextColumn::make('tanggal_transaksi')
-                    ->label('Tanggal Transaksi')
-                    ->sortable(),
+                TextColumn::make('tanggal_transaksi')->label('Tanggal Transaksi')->sortable(),
                 TextColumn::make('barangMaster.harga_satuan')
                     ->label('Harga Satuan')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // FormatbarangMaster. for display
+                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
                 TextColumn::make('total_harga')
                     ->label('Total Harga')
                     ->sortable()
                     ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
             ])
-
             ->filters([])
             ->actions([Tables\Actions\EditAction::make()])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
-        }
+    }
 
     public static function getPages(): array
     {

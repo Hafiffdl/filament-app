@@ -9,13 +9,22 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 class ReportController extends Controller
 {
     public function printSuratKeluar($id)
-{
-    $suratKeluar = SuratKeluar::with('barangTransaksis.barangMaster')->findOrFail($id);
+    {
+        $suratKeluar = SuratKeluar::with('barangTransaksis.barangMaster')->findOrFail($id);
 
-        $pdf = PDF::loadView('reports.surat-keluar', compact('suratKeluar'));
+            $pdf = PDF::loadView('reports.surat-keluar', compact('suratKeluar'));
 
-        return $pdf->stream('surat-keluar' . $suratKeluar->nomor . '.pdf');
-}
+            return $pdf->stream('surat-keluar' . $suratKeluar->nomor . '.pdf');
+    }
+
+    public function printSuratSerahTerima($id)
+    {
+        $suratSerahTerima = SuratKeluar::with('barangTransaksis.barangMaster')->findOrFail($id);
+
+            $pdf = PDF::loadView('reports.surat-serah-terima', compact('suratSerahTerima'));
+
+            return $pdf->stream('surat-serah-terima' . $suratSerahTerima->nomor . '.pdf');
+    }
 }
 
 

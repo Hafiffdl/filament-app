@@ -28,6 +28,9 @@ class SuratKeluarResource extends Resource
             TextInput::make('nomor')
                 ->required()
                 ->label('Nomor Surat'),
+            TextInput::make('spmb_nomor')
+                ->required()
+                ->label('SPMB'),
             DatePicker::make('tanggal')
                 ->required()
                 ->label('Tanggal Surat'),
@@ -67,6 +70,7 @@ class SuratKeluarResource extends Resource
         return $table->columns([
             TextColumn::make('nomor')->label('Nomor Surat')->sortable(),
             TextColumn::make('tanggal')->date()->label('Tanggal Surat')->sortable(),
+            TextColumn::make('spmb_nomor')->label('SPMB')->sortable(),
             TextColumn::make('faskes.nama')->label('Faskes')->sortable(),
             TextColumn::make('barangTransaksis.barangMaster.nama_barang')->label('Nama Barang')->sortable(),
             TextColumn::make('barangTransaksis.barangMaster.nomor_batch')->label('Nomor Batch')->sortable(),
@@ -77,12 +81,19 @@ class SuratKeluarResource extends Resource
             TextColumn::make('barangTransaksis.total_harga')->label('Total Harga')->sortable()
         ])
         ->actions([
-            Action::make('print')
-                ->label('Print Laporan')
-                ->icon('heroicon-o-printer')
-                ->url(fn (SuratKeluar $record) => route('print.surat-keluar', $record->id))
-                ->openUrlInNewTab(),
+            Action::make('printSBBK')
+                ->label('Print SBBK') // Label untuk Print SBBK
+                ->icon('heroicon-o-printer') // Ikon untuk Print SBBK
+                ->url(fn (SuratKeluar $record) => route('print.surat-keluar', $record->id)) // Route ke Print SBBK
+                ->openUrlInNewTab(), // Membuka di tab baru
+
+            Action::make('printBAST')
+                ->label('Print BAST') // Label untuk Print BAST
+                ->icon('heroicon-o-printer') // Ikon untuk Print BAST
+                ->url(fn (SuratKeluar $record) => route('print.surat-serah-terima', $record->id)) // Route ke Print BAST
+                ->openUrlInNewTab() // Membuka di tab baru
         ])
+
         ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 

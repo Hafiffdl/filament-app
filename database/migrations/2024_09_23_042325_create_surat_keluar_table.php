@@ -14,6 +14,7 @@ class CreateSuratKeluarTable extends Migration
                 $table->foreignId('surat_keluar_id')->constrained()->onDelete('cascade');
                 $table->foreignId('barang_transaksi_id')->constrained()->onDelete('cascade');
                 $table->string('nomor');
+                $table->string('spmb_nomor');
                 $table->date('tanggal');
                 $table->timestamps();
             });
