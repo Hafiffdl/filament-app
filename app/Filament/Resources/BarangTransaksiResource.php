@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Log; // Import Log
 
 class BarangTransaksiResource extends Resource
 {
@@ -35,49 +36,48 @@ class BarangTransaksiResource extends Resource
                     ->label('Tanggal Transaksi')
                     ->required(),
 
-                // Repeater for multiple item inputs
+                // Repeater untuk input data beberapa item
                 Repeater::make('items')
                     ->label('Transaksi Barang')
-                    ->relationship('barangTransaksis') // Define your relationship
                     ->schema([
                         Select::make('barang_master_id')
-                            ->relationship('barangMaster', 'nama_barang')
+                            ->options(BarangMaster::all()->pluck('nama_barang', 'id'))
                             ->label('Nama Barang')
-                            ->required()
-                            ->reactive()
-                            ->afterStateUpdated(function (callable $set, $state) {
-                                $barangMaster = BarangMaster::find($state);
-                                if ($barangMaster) {
-                                    $set('harga_satuan', $barangMaster->harga_satuan);
-                                    $set('nomor_batch', $barangMaster->nomor_batch);
-                                    $set('sumber_dana', $barangMaster->sumber_dana);
-                                    $set('satuan', $barangMaster->satuan);
-                                    $set('stock', $barangMaster->stock);
-                                    $set('kadaluarsa', $barangMaster->kadaluarsa);
-                                }
-                            }),
-
+                            ->required(),
+                        
+                        TextInput::make('harga_satuan') // Tambahkan harga_satuan agar terdehidrasi
+                            ->label('Harga Satuan')
+                            ->disabled()
+                            ->dehydrated(), // Pastikan harga_satuan ikut dikirim saat submit form
+                        
                         TextInput::make('jumlah')
                             ->label('Jumlah')
                             ->numeric()
                             ->required()
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                $hargaSatuan = $get('harga_satuan');
-                                $set('total_harga', $state * $hargaSatuan);
+                                $barangMaster = BarangMaster::find($get('barang_master_id'));
+                                
+                                if ($barangMaster) {
+                                    Log::info('BarangMaster ditemukan: ' . $barangMaster->toJson());
+
+                                    $hargaSatuan = $barangMaster->harga_satuan;
+                                    $set('harga_satuan', $hargaSatuan); // Set harga_satuan pada field
+                                    $set('total_harga', $hargaSatuan * $state); // Hitung total harga
+                                } else {
+                                    Log::error('BarangMaster tidak ditemukan untuk ID: ' . $get('barang_master_id'));
+                                    $set('total_harga', 0);
+                                }
                             }),
 
                         TextInput::make('total_harga')
                             ->label('Total Harga')
                             ->disabled()
-                            ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
+                            ->dehydrated()
+                            ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')),
                     ])
-                    ->minItems(1) // Minimum of 1 item
-                    ->createItemButtonLabel('Tambah Barang'), // Label for adding new items
-
-                TextInput::make('stock')
-                    ->label('Stock')
-                    ->disabled(),
+                    ->minItems(1)
+                    ->createItemButtonLabel('Tambah Barang'),
             ]);
     }
 
@@ -85,22 +85,37 @@ class BarangTransaksiResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('faskes.nama')->label('Faskes')->sortable(),
-                TextColumn::make('barangMaster.nama_barang')->label('Nama Barang')->sortable(),
-                TextColumn::make('barangMaster.nomor_batch')->label('Nomor Batch')->sortable(),
-                TextColumn::make('kadaluarsa')->label('Kadaluarsa')->sortable(),
-                TextColumn::make('barangMaster.satuan')->label('Satuan')->sortable(),
-                TextColumn::make('barangMaster.sumber_dana')->label('Sumber Dana')->sortable(),
-                TextColumn::make('jumlah')->label('Jumlah')->sortable(),
-                TextColumn::make('tanggal_transaksi')->label('Tanggal Transaksi')->sortable(),
-                TextColumn::make('barangMaster.harga_satuan')
+                TextColumn::make('faskes.nama')
+                    ->label('Faskes')
+                    ->sortable(),
+                
+                // Akses field barangMaster melalui 'items.first'
+                TextColumn::make('items.first.barangMaster.nama_barang')
+                    ->label('Nama Barang')
+                    ->sortable(),
+                    
+                TextColumn::make('items.first.barangMaster.nomor_batch')
+                    ->label('Nomor Batch')
+                    ->sortable(),
+                    
+                TextColumn::make('items.first.barangMaster.kadaluarsa')
+                    ->label('Kadaluarsa')
+                    ->sortable(),
+                    
+                TextColumn::make('items.first.barangMaster.satuan')
+                    ->label('Satuan')
+                    ->sortable(),
+
+                // Pastikan harga_satuan diakses dengan benar
+                TextColumn::make('items.first.barangMaster.harga_satuan')
                     ->label('Harga Satuan')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
-                TextColumn::make('total_harga')
+                    ->formatStateUsing(fn ($state) => number_format(floatval($state), 2, ',', '.')), // Konversi string ke float
+                    
+                TextColumn::make('items.first.total_harga')
                     ->label('Total Harga')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
+                    ->formatStateUsing(fn ($state) => number_format(floatval($state), 2, ',', '.')), // Konversi string ke float
             ])
             ->filters([])
             ->actions([Tables\Actions\EditAction::make()])

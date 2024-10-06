@@ -11,23 +11,25 @@ class BarangTransaksi extends Model
     use HasFactory;
 
     protected $fillable = [
-        'faskes_id', 'barang_master_id', 'jumlah', 'total_harga', 'kadaluarsa', 'harga_satuan', 'tanggal_transaksi'
+        'faskes_id', 'total_harga', 'tanggal_transaksi'
     ];
+
+
+    public function items()
+    {
+        return $this->hasMany(BarangTransaksiItem::class, 'barang_transaksi_id');
+    }
+
 
     public function faskes()
     {
         return $this->belongsTo(Faskes::class, 'faskes_id');
     }
 
-    public function barangMaster()
-    {
-        return $this->belongsTo(BarangMaster::class, 'barang_master_id');
-    }
-
-    public function barangTransaksis()
-    {
-        return $this->hasMany(BarangTransaksi::class);
-    }
+//     public function barangMaster()
+// {
+//     return $this->belongsTo(BarangMaster::class);
+// }
 
     public function suratKeluar()
     {
@@ -39,22 +41,23 @@ class BarangTransaksi extends Model
         return "{$this->barangMaster->nama_barang} - Batch: {$this->barangMaster->nomor_batch}";
     }
 
+
     protected static function booted()
-    {
-        static::saving(function ($transaksi) {
-            $barang = $transaksi->barangMaster;
-            if ($barang) {
-                $transaksi->total_harga = $transaksi->jumlah * $barang->harga_satuan;
+{
+    static::saving(function ($item) {
+        $barang = $item->barangMaster; // Ambil barangMaster dari BarangTransaksiItem
+        if ($barang) {
+            $item->total_harga = $item->jumlah * $barang->harga_satuan; // Hitung total harga berdasarkan jumlah dan harga satuan barang
 
-                // Ensure stock does not go negative
-                if ($barang->stock < $transaksi->jumlah) {
-                    throw new Error("Stock tidak cukup untuk transaksi ini.");
-                }
-
-                // Update stock
-                $barang->stock -= $transaksi->jumlah;
-                $barang->save();
+            // Pastikan stok tidak negatif
+            if ($barang->stock < $item->jumlah) {
+                throw new Error("Stock tidak cukup untuk transaksi ini.");
             }
-        });
+
+            // Update stok barang
+            $barang->stock -= $item->jumlah;
+            $barang->save(); // Simpan perubahan stok barang
+        }
+    });
     }
 }
