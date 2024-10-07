@@ -44,12 +44,12 @@ class BarangTransaksiResource extends Resource
                             ->options(BarangMaster::all()->pluck('nama_barang', 'id'))
                             ->label('Nama Barang')
                             ->required(),
-                        
+
                         TextInput::make('harga_satuan') // Tambahkan harga_satuan agar terdehidrasi
                             ->label('Harga Satuan')
                             ->disabled()
                             ->dehydrated(), // Pastikan harga_satuan ikut dikirim saat submit form
-                        
+
                         TextInput::make('jumlah')
                             ->label('Jumlah')
                             ->numeric()
@@ -57,7 +57,7 @@ class BarangTransaksiResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $barangMaster = BarangMaster::find($get('barang_master_id'));
-                                
+
                                 if ($barangMaster) {
                                     Log::info('BarangMaster ditemukan: ' . $barangMaster->toJson());
 
@@ -88,31 +88,31 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('faskes.nama')
                     ->label('Faskes')
                     ->sortable(),
-                
+
                 // Akses field barangMaster melalui 'items.first'
-                TextColumn::make('items.first.barangMaster.nama_barang')
+                TextColumn::make('items.barangMaster.nama_barang')
                     ->label('Nama Barang')
                     ->sortable(),
-                    
-                TextColumn::make('items.first.barangMaster.nomor_batch')
+
+                TextColumn::make('items.barangMaster.nomor_batch')
                     ->label('Nomor Batch')
                     ->sortable(),
-                    
-                TextColumn::make('items.first.barangMaster.kadaluarsa')
+
+                TextColumn::make('items.barangMaster.kadaluarsa')
                     ->label('Kadaluarsa')
                     ->sortable(),
-                    
-                TextColumn::make('items.first.barangMaster.satuan')
+
+                TextColumn::make('items.barangMaster.satuan')
                     ->label('Satuan')
                     ->sortable(),
 
                 // Pastikan harga_satuan diakses dengan benar
-                TextColumn::make('items.first.barangMaster.harga_satuan')
+                TextColumn::make('items.barangMaster.harga_satuan')
                     ->label('Harga Satuan')
                     ->sortable()
                     ->formatStateUsing(fn ($state) => number_format(floatval($state), 2, ',', '.')), // Konversi string ke float
-                    
-                TextColumn::make('items.first.total_harga')
+
+                TextColumn::make('items.total_harga')
                     ->label('Total Harga')
                     ->sortable()
                     ->formatStateUsing(fn ($state) => number_format(floatval($state), 2, ',', '.')), // Konversi string ke float

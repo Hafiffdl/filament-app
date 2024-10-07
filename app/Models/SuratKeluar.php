@@ -38,7 +38,7 @@ class SuratKeluar extends Model
 
     public function barangTransaksis()
     {
-        return $this->belongsToMany(BarangTransaksi::class, 'surat_keluar_barang_transaksi');
+        return $this->belongsToMany(BarangTransaksi::class, 'surat_keluar_barang_transaksi', 'surat_keluar_id', 'barang_transaksi_id');
     }
 
 }

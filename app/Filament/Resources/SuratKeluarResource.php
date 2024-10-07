@@ -15,7 +15,6 @@ use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
 
 class SuratKeluarResource extends Resource
 {
@@ -41,6 +40,7 @@ class SuratKeluarResource extends Resource
                 ->reactive()
                 ->afterStateUpdated(function ($state, callable $set) {
                     if ($state) {
+                        // Fetch barang_transaksi related to the selected faskes_id
                         $barangTransaksis = BarangTransaksi::where('faskes_id', $state)->get();
                         $set('barang_transaksi_ids', $barangTransaksis->pluck('id')->toArray());
                         $set('total_harga', $barangTransaksis->sum('total_harga'));
@@ -51,6 +51,7 @@ class SuratKeluarResource extends Resource
                 ->options(function (callable $get) {
                     $faskesId = $get('faskes_id');
                     if ($faskesId) {
+                        // Fetch barangTransaksi options based on faskes_id
                         return BarangTransaksi::where('faskes_id', $faskesId)
                             ->get()
                             ->pluck('detail', 'id');
@@ -61,7 +62,7 @@ class SuratKeluarResource extends Resource
                 ->required(),
             TextInput::make('total_harga')
                 ->disabled()
-                ->label('Total Harga')
+                ->label('Total Harga'),
         ]);
     }
 
@@ -72,13 +73,11 @@ class SuratKeluarResource extends Resource
             TextColumn::make('tanggal')->date()->label('Tanggal Surat')->sortable(),
             TextColumn::make('spmb_nomor')->label('SPMB')->sortable(),
             TextColumn::make('faskes.nama')->label('Faskes')->sortable(),
-            TextColumn::make('barangTransaksis.barangMaster.nama_barang')->label('Nama Barang')->sortable(),
-            TextColumn::make('barangTransaksis.barangMaster.nomor_batch')->label('Nomor Batch')->sortable(),
-            TextColumn::make('barangTransaksis.kadaluarsa')->label('Kadaluarsa')->sortable(),
-            TextColumn::make('barangTransaksis.barangMaster.satuan')->label('Satuan')->sortable(),
-            TextColumn::make('barangTransaksis.barangMaster.sumber_dana')->label('Sumber Dana')->sortable(),
-            TextColumn::make('barangTransaksis.jumlah')->label('Jumlah')->sortable(),
-            TextColumn::make('barangTransaksis.total_harga')->label('Total Harga')->sortable()
+            TextColumn::make('barangTransaksi.nama_barang')->label('Nama Barang')->sortable(),
+            TextColumn::make('barangTransaksi.nomor_batch')->label('Nomor Batch')->sortable(),
+            TextColumn::make('barangTransaksi.kadaluarsa')->label('Kadaluarsa')->sortable(),
+            TextColumn::make('barangTransaksi.satuan')->label('Satuan')->sortable(),
+            TextColumn::make('total_harga')->label('Total Harga')->sortable()
         ])
         ->actions([
             Action::make('printSBBK')
