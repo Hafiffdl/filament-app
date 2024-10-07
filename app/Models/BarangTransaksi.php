@@ -24,6 +24,12 @@ class BarangTransaksi extends Model
         return $this->belongsTo(Faskes::class, 'faskes_id');
     }
 
+    public function itemsWithMaster()
+{
+    return $this->hasMany(BarangTransaksiItem::class, 'barang_transaksi_id')
+                ->with('barangMaster');
+}
+
     public function suratKeluar()
     {
         return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi');

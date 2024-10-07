@@ -15,6 +15,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Log; // Import Log
+use Illuminate\Database\Eloquent\Builder; 
 
 class BarangTransaksiResource extends Resource
 {
@@ -40,11 +41,12 @@ class BarangTransaksiResource extends Resource
                 Repeater::make('items')
                     ->label('Transaksi Barang')
                     ->schema([
-                        Select::make('barang_master_id')
-                            ->options(BarangMaster::all()->pluck('nama_barang', 'id'))
-                            ->label('Nama Barang')
-                            ->required(),
-
+                Select::make('barang_master_id')
+                ->options(BarangMaster::all()->pluck('nama_barang', 'id')->unique()) // Pastikan opsi barang unik
+                ->label('Nama Barang')
+                ->required(),
+            
+ 
                         TextInput::make('harga_satuan') // Tambahkan harga_satuan agar terdehidrasi
                             ->label('Harga Satuan')
                             ->disabled()
@@ -88,39 +90,74 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('faskes.nama')
                     ->label('Faskes')
                     ->sortable(),
-
-                // Akses field barangMaster melalui 'items.first'
-                TextColumn::make('items.barangMaster.nama_barang')
+    
+                // Pengecekan apakah items tersedia, jika tidak, transaksi tidak ditampilkan
+                TextColumn::make('items')
                     ->label('Nama Barang')
+                    ->getStateUsing(function ($record) {
+                        // Tambahkan pengecekan apakah record memiliki items
+                        if (!$record || !$record->items) {
+                            return 'Data barang tidak ditemukan'; // Jika tidak ada items, return pesan default
+                        }
+    
+                        $items = $record->items;
+                        if ($items->isEmpty()) {
+                            return 'Data barang tidak ditemukan'; // Jika items kosong, return pesan default
+                        }
+    
+                        // Jika item tersedia, tampilkan nama barang dan jumlah
+                        return $items->map(function ($item) {
+                            $barangMaster = $item->barangMaster;
+                            if ($barangMaster) {
+                                return $barangMaster->nama_barang . ' (Jumlah: ' . $item->jumlah . ')';
+                            } else {
+                                return 'Barang tidak ditemukan'; // Jika barangMaster tidak ada
+                            }
+                        })->implode(', ');
+                    })
                     ->sortable(),
-
+    
                 TextColumn::make('items.barangMaster.nomor_batch')
                     ->label('Nomor Batch')
                     ->sortable(),
-
+    
                 TextColumn::make('items.barangMaster.kadaluarsa')
                     ->label('Kadaluarsa')
                     ->sortable(),
-
+    
                 TextColumn::make('items.barangMaster.satuan')
                     ->label('Satuan')
                     ->sortable(),
-
-                // Pastikan harga_satuan diakses dengan benar
-                TextColumn::make('items.barangMaster.harga_satuan')
-                    ->label('Harga Satuan')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format(floatval($state), 2, ',', '.')), // Konversi string ke float
-
+    
                 TextColumn::make('items.total_harga')
                     ->label('Total Harga')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format(floatval($state), 2, ',', '.')), // Konversi string ke float
+                    ->getStateUsing(function ($record) {
+                        if (!$record || !$record->items) {
+                            return '0'; // Jika tidak ada barang, default 0
+                        }
+    
+                        $items = $record->items;
+                        if ($items->isEmpty()) {
+                            return '0'; // Jika items kosong, total harga 0
+                        }
+    
+                        // Hitung total harga
+                        return $items->sum(function ($item) {
+                            $hargaSatuan = $item->barangMaster ? $item->barangMaster->harga_satuan : 0;
+                            return $hargaSatuan * $item->jumlah;
+                        });
+                    })
+                    ->formatStateUsing(fn ($state) => number_format(floatval($state), 2, ',', '.')),
             ])
-            ->filters([])
+            ->filters([
+                Tables\Filters\Filter::make('items_not_empty')
+                    ->label('Transaksi dengan Barang')
+                    ->query(fn (Builder $query) => $query->has('items'))
+            ])
             ->actions([Tables\Actions\EditAction::make()])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
+    
 
     public static function getPages(): array
     {
