@@ -7,7 +7,7 @@ use App\Models\BarangTransaksi;
 use App\Models\BarangTransaksiItem;
 use Filament\Resources\Pages\CreateRecord;
 use App\Models\BarangMaster;
-use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Log;
 
 class CreateBarangTransaksi extends CreateRecord
 {

@@ -24,11 +24,6 @@ class BarangTransaksi extends Model
         return $this->belongsTo(Faskes::class, 'faskes_id');
     }
 
-    public function barangMaster()
-    {
-        return $this->belongsTo(BarangMaster::class, 'barang_master_id');
-    }
-
     public function suratKeluar()
     {
         return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi');
@@ -36,10 +31,12 @@ class BarangTransaksi extends Model
 
     public function getDetailAttribute()
     {
-        if ($this->barangMaster) {
-            return "{$this->barangMaster->nama_barang} - Batch: {$this->barangMaster->nomor_batch}";
-        }
-        return 'Barang tidak ditemukan'; // Fallback if barangMaster is null
+        $items = $this->items->map(function ($item) {
+            $barangMaster = $item->barangMaster;
+            return "{$barangMaster->nama_barang} - Batch: {$barangMaster->nomor_batch} - Jumlah: {$item->jumlah}";
+        })->implode(', ');
+
+        return $items ?: 'Barang tidak ditemukan';
     }
 
     protected static function booted()

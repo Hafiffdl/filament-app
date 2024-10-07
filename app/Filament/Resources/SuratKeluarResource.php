@@ -38,31 +38,43 @@ class SuratKeluarResource extends Resource
                 ->options(Faskes::pluck('nama', 'id'))
                 ->required()
                 ->reactive()
-                ->afterStateUpdated(function ($state, callable $set) {
-                    if ($state) {
-                        // Fetch barang_transaksi related to the selected faskes_id
-                        $barangTransaksis = BarangTransaksi::where('faskes_id', $state)->get();
-                        $set('barang_transaksi_ids', $barangTransaksis->pluck('id')->toArray());
-                        $set('total_harga', $barangTransaksis->sum('total_harga'));
-                    }
-                }),
+                ->afterStateUpdated(fn (callable $set) => $set('barang_transaksi_ids', [])),
             Select::make('barang_transaksi_ids')
                 ->label('Barang Transaksi')
                 ->options(function (callable $get) {
                     $faskesId = $get('faskes_id');
-                    if ($faskesId) {
-                        // Fetch barangTransaksi options based on faskes_id
-                        return BarangTransaksi::where('faskes_id', $faskesId)
-                            ->get()
-                            ->pluck('detail', 'id');
-                    }
-                    return [];
+                    if (!$faskesId);
+
+                    return BarangTransaksi::where('faskes_id', $faskesId)
+                        ->with(['items.barangMaster'])
+                        ->get()
+                        ->flatMap(function ($transaksi) {
+                            return $transaksi->items->map(function ($item) {
+                                $barangMaster = $item->barangMaster;
+                                $totalHarga = $item->jumlah * $barangMaster->harga_satuan;
+                                return [
+                                    $item->id => "{$barangMaster->nama_barang} - Batch: {$barangMaster->nomor_batch} - Jumlah: {$item->jumlah} - Harga Satuan: Rp " . number_format($barangMaster->harga_satuan, 2) . " - Total: Rp " . number_format($totalHarga, 2)
+                                ];
+                            });
+                        });
                 })
                 ->multiple()
-                ->required(),
+                ->required()
+                ->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    $totalHarga = BarangTransaksi::whereHas('items', function ($query) use ($state) {
+                        $query->whereIn('id', $state);
+                    })->sum('total_harga');
+                    $set('total_harga', $totalHarga);
+                }),
             TextInput::make('total_harga')
                 ->disabled()
-                ->label('Total Harga'),
+                ->label('Total Harga')
+                ->reactive()
+                ->afterStateHydrated(function (TextInput $component, $state) {
+                    $component->state(number_format($state, 2, ',', '.'));
+                })
+                ->dehydrateStateUsing(fn ($state) => str_replace([',', '.'], ['', '.'], $state)),
         ]);
     }
 
@@ -73,26 +85,36 @@ class SuratKeluarResource extends Resource
             TextColumn::make('tanggal')->date()->label('Tanggal Surat')->sortable(),
             TextColumn::make('spmb_nomor')->label('SPMB')->sortable(),
             TextColumn::make('faskes.nama')->label('Faskes')->sortable(),
-            TextColumn::make('barangTransaksi.nama_barang')->label('Nama Barang')->sortable(),
-            TextColumn::make('barangTransaksi.nomor_batch')->label('Nomor Batch')->sortable(),
-            TextColumn::make('barangTransaksi.kadaluarsa')->label('Kadaluarsa')->sortable(),
-            TextColumn::make('barangTransaksi.satuan')->label('Satuan')->sortable(),
-            TextColumn::make('total_harga')->label('Total Harga')->sortable()
+            TextColumn::make('barangTransaksis.items.barangMaster.nama_barang')->label('Nama Barang')->sortable(),
+            TextColumn::make('barangTransaksis.items.barangMaster.nomor_batch')->label('Nomor Batch')->sortable(),
+            TextColumn::make('barangTransaksis.items.jumlah')->label('Jumlah')->sortable(),
+            TextColumn::make('barangTransaksis.items.barangMaster.harga_satuan')
+                ->label('Harga Satuan')
+                ->money('idr')
+                ->sortable(),
+            TextColumn::make('barangTransaksis.items.total_harga')
+                ->label('Total Harga')
+                ->money('idr')
+                ->sortable()
+                ->getStateUsing(function ($record) {
+                    return $record->barangTransaksis->sum(function ($transaksi) {
+                        return $transaksi->items->sum('total_harga');
+                    });
+                }),
         ])
         ->actions([
             Action::make('printSBBK')
-                ->label('Print SBBK') // Label untuk Print SBBK
-                ->icon('heroicon-o-printer') // Ikon untuk Print SBBK
-                ->url(fn (SuratKeluar $record) => route('print.surat-keluar', $record->id)) // Route ke Print SBBK
-                ->openUrlInNewTab(), // Membuka di tab baru
+                ->label('Print SBBK')
+                ->icon('heroicon-o-printer')
+                ->url(fn (SuratKeluar $record) => route('print.surat-keluar', $record->id))
+                ->openUrlInNewTab(),
 
             Action::make('printBAST')
-                ->label('Print BAST') // Label untuk Print BAST
-                ->icon('heroicon-o-printer') // Ikon untuk Print BAST
-                ->url(fn (SuratKeluar $record) => route('print.surat-serah-terima', $record->id)) // Route ke Print BAST
-                ->openUrlInNewTab() // Membuka di tab baru
+                ->label('Print BAST')
+                ->icon('heroicon-o-printer')
+                ->url(fn (SuratKeluar $record) => route('print.surat-serah-terima', $record->id))
+                ->openUrlInNewTab()
         ])
-
         ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 

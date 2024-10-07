@@ -15,7 +15,7 @@ class BarangMaster extends Model
     public function barangTransaksi()
     {
         return $this->hasMany(barangTransaksi::class);
-    
+
     }
 
     public function items()
