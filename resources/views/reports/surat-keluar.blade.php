@@ -191,23 +191,25 @@
             <th>TOTAL NILAI BARANG</th>
         </tr>
         @foreach($suratKeluar->barangTransaksis as $transaksi)
-        <tr>
-            <td>{{ $loop->iteration }}</td>
-            <td>{{ $transaksi->barangMaster->nama_barang }}</td>
-            <td>{{ $transaksi->jumlah }}</td>
-            <td>{{ $transaksi->barangMaster->satuan }}</td>
-            <td>{{ $transaksi->barangMaster->nomor_batch }}</td>
-            <td>{{ $transaksi->kadaluarsa }}</td>
-            <td>Rp{{ number_format($transaksi->barangMaster->harga_satuan, 2, ',', '.') }}</td>
-            <td>Rp{{ number_format($transaksi->total_harga, 2, ',', '.') }}</td>
-            <td>{{ $transaksi->barangMaster->sumber_dana }}</td>
-            <td>{{ $transaksi->titik_permintaan_darurat }}</td>
-            <td>{{ $transaksi->titik_stok_realokasi }}</td>
-        </tr>
+            @foreach($transaksi->items as $item)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->barangMaster->nama_barang }}</td>
+                    <td>{{ $item->jumlah }}</td>
+                    <td>{{ $item->barangMaster->satuan }}</td>
+                    <td>{{ $item->barangMaster->nomor_batch }}</td>
+                    <td>{{ $item->barangMaster->kadaluarsa }}</td>
+                    <td>Rp{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
+                    <td>Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
+                    <td>{{ $item->barangMaster->sumber_dana }}</td>
+                    <td>{{ $item->titik_permintaan_darurat }}</td>
+                    <td>{{ $item->titik_stok_realokasi }}</td>
+                </tr>
+            @endforeach
         @endforeach
         <tr>
             <td colspan="7" class="right-align" style="font-weight: bold;">TOTAL NILAI BARANG</td>
-            <td class="right-align">Rp{{ number_format($suratKeluar->barangTransaksis->sum('total_harga'), 2, ',', '.') }}</td>
+            <td class="right-align">Rp{{ number_format($suratKeluar->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
             <td colspan="3"></td>
         </tr>
     </table>
@@ -257,6 +259,5 @@
         <strong>Catatan:</strong><br>
         • Harga satuan yang dicantumkan adalah harga satuan pada saat penerimaan terakhir
     </p>
-
 </body>
 </html>
