@@ -136,7 +136,7 @@
 
     <p>dalam hal ini bertindak dan atas nama Jabatan tersebut di atas yang selanjutnya dalam Berita Acara ini disebut PIHAK KEDUA</p>
 
-    <p>Dengan mengingat telah melaksanakan penyerahan dan penerimaan barang persediaan alat/obat kontrasepsi dan non kontrasepsi *) dengan rincian sebagai berikut :</p>
+    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->format('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->format('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
 
     <table>
         <tr>
@@ -150,7 +150,7 @@
         @foreach($suratSerahTerima->barangTransaksis as $transaksi)
             @foreach($transaksi->items as $item)
                 <tr>
-                    <td>{{ $loop->parent->iteration }}.{{ $loop->iteration }}</td>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->barangMaster->nama_barang }}</td>
                     <td>{{ $item->jumlah }}</td>
                     <td>{{ $item->barangMaster->satuan }}</td>
