@@ -33,7 +33,7 @@ class SuratKeluar extends Model
 
     public function faskes()
     {
-        return $this->belongsTo(Faskes::class,'faskes_id');
+        return $this->belongsTo(Faskes::class, 'faskes_id');
     }
 
     public function barangTransaksis()
