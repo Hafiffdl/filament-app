@@ -30,10 +30,10 @@ class BarangTransaksi extends Model
                 ->with('barangMaster');
 }
 
-    public function suratKeluar()
-    {
-        return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi');
-    }
+public function suratKeluars()
+{
+    return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi', 'barang_transaksi_id', 'surat_keluar_id');
+}
 
     public function getDetailAttribute()
     {
