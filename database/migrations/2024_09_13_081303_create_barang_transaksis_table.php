@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('barang_transaksis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('faskes_id')->nullable()->constrained('faskes')->onDelete('cascade');
-            $table->foreignId('barang_master_id')->constrained('barang_masters')->onDelete('cascade'); // Ensure 'barang_masters' table exists
-            $table->integer('jumlah');
-            $table->decimal('total_harga', 10, 2);
-            $table->date('kadaluarsa');
+            $table->foreignId('faskes_id')->constrained('faskes'); // Foreign key ke faskes
+            $table->date('tanggal_transaksi');
+            $table->decimal('total_harga', 10, 2)->nullable();
             $table->timestamps();
         });
     }

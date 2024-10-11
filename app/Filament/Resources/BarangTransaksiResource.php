@@ -9,16 +9,25 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
+use Exception;
+use Filament\Notifications\Notification;
 
 class BarangTransaksiResource extends Resource
 {
     protected static ?string $model = BarangTransaksi::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+
+    protected static ?string $pluralModelLabel = 'Transaksi Alokon';
 
     public static function form(Form $form): Form
     {
@@ -27,88 +36,194 @@ class BarangTransaksiResource extends Resource
                 Select::make('faskes_id')
                     ->relationship('faskes', 'nama')
                     ->label('Faskes')
+                    ->required()
+                    ->searchable(),
+
+                DatePicker::make('tanggal_transaksi')
+                    ->label('Tanggal Transaksi')
                     ->required(),
 
-                Select::make('barang_master_id')
-                    ->relationship('barangMaster', 'nama_barang')
-                    ->label('Nama Barang')
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        $barangMaster = BarangMaster::find($state);
-                        if ($barangMaster) {
-                            $set('harga_satuan', $barangMaster->harga_satuan);
-                            $set('nomor_batch', $barangMaster->nomor_batch);
-                            $set('sumber_dana', $barangMaster->sumber_dana);
-                            $set('satuan', $barangMaster->satuan);
-                            $set('stock', $barangMaster->stock);
-                            $set('kadaluarsa', $barangMaster->kadaluarsa);
-                        }
-                    }),
+                Repeater::make('items')
+                    ->label('Transaksi Barang')
+                    ->relationship('items')
+                    ->schema([
+                        Select::make('barang_master_id')
+                            ->relationship('barangMaster', 'nama_barang')
+                            ->label('Nama Barang')
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $barangMaster = BarangMaster::find($state);
+                                if ($barangMaster) {
+                                    $set('harga_satuan', $barangMaster->harga_satuan);
+                                    $set('stock', $barangMaster->stock);  // Set stok dari barang master
+                                }
+                            }),
 
-                TextInput::make('harga_satuan')
-                    ->label('Harga Satuan')
-                    ->disabled()
-                    ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
+                        TextInput::make('stock')
+                            ->label('Stock')
+                            ->disabled()
+                            ->numeric()
+                            ->dehydrated(false),
 
-                TextInput::make('nomor_batch')
-                    ->label('Nomor Batch')
-                    ->disabled(),
+                        TextInput::make('harga_satuan')
+                            ->label('Harga Satuan')
+                            ->disabled()
+                            ->numeric(),
 
-                DatePicker::make('kadaluarsa')
-                    ->label('Kadaluarsa')
-                    ->required(),
+                        TextInput::make('jumlah')
+                            ->label('Jumlah')
+                            ->numeric()
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                $hargaSatuan = $get('harga_satuan');
+                                $barangMaster = BarangMaster::find($get('barang_master_id'));
 
-                TextInput::make('satuan')
-                    ->label('Satuan')
-                    ->disabled(),
+                                // Cek stok barang saat jumlah diubah
+                                if ($barangMaster && $barangMaster->stock < $state) {
+                                    Notification::make()
+                                        ->title('Stok Barang Tidak Cukup')
+                                        ->danger()
+                                        ->body("Stok barang '{$barangMaster->nama_barang}' tidak cukup. Stok saat ini: {$barangMaster->stock}.")
+                                        ->send();
+                                }
 
-                TextInput::make('sumber_dana')
-                    ->label('Sumber Dana')
-                    ->disabled(),
+                                $set('total_harga', $hargaSatuan * $state);
+                            }),
 
-                TextInput::make('jumlah')
-                    ->label('Jumlah')
-                    ->numeric()
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $hargaSatuan = $get('harga_satuan');
-                        $set('total_harga', $state * $hargaSatuan);
-                    }),
-
-                TextInput::make('total_harga')
-                    ->label('Total Harga')
-                    ->disabled()
-                    ->dehydrateStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
-
-                TextInput::make('stock')
-                    ->label('Stock')
-                    ->disabled(),
+                        TextInput::make('total_harga')
+                            ->label('Total Harga')
+                            ->disabled()
+                            ->numeric()
+                            ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')),
+                    ])
+                    ->minItems(1)
+                    ->defaultItems(1)
+                    ->createItemButtonLabel('Tambah Barang'),
             ]);
+    }
+
+    public static function beforeCreate($data)
+    {
+        // Loop through all items in the transaction and check stock
+        DB::beginTransaction();  // Mulai transaksi database
+        try {
+            foreach ($data['items'] as $item) {
+                $barangMaster = BarangMaster::find($item['barang_master_id']);
+                if ($barangMaster && $barangMaster->stock <= 0) {
+                    // Tampilkan notifikasi error
+                    Notification::make()
+                        ->title('Error Stok')
+                        ->danger()
+                        ->body("Stok barang '{$barangMaster->nama_barang}' habis. Transaksi tidak dapat dilanjutkan.")
+                        ->send();
+
+                    throw new Exception("Stok barang '{$barangMaster->nama_barang}' habis.");
+                }
+            }
+            // Jika stok mencukupi, commit transaksi database
+            DB::commit();
+        } catch (Exception $e) {
+            // Jika ada error, rollback transaksi dan tampilkan error
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('faskes.nama')->label('Faskes')->sortable(),
-                TextColumn::make('barangMaster.nama_barang')->label('Nama Barang')->sortable(),
-                TextColumn::make('barangMaster.nomor_batch')->label('Nomor Batch')->sortable(),
-                TextColumn::make('kadaluarsa')->label('Kadaluarsa')->sortable(),
-                TextColumn::make('barangMaster.satuan')->label('Satuan')->sortable(),
-                TextColumn::make('barangMaster.sumber_dana')->label('Sumber Dana')->sortable(),
-                TextColumn::make('jumlah')->label('Jumlah')->sortable(),
-                TextColumn::make('barangMaster.harga_satuan')
-                    ->label('Harga Satuan')
+                TextColumn::make('faskes.nama')
+                    ->label('Faskes')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // FormatbarangMaster. for display
+                    ->searchable(),
+
+                TextColumn::make('items.barangMaster.nama_barang')
+                    ->label('Nama Barang')
+                    ->getStateUsing(function ($record) {
+                        $namaBarang = $record->items->map(function ($item) {
+                            return $item->barangMaster->nama_barang ?? 'N/A';
+                        })->unique()->take(2);
+                        return $namaBarang->count() > 1
+                            ? $namaBarang->implode(', ') . '...'
+                            : $namaBarang->first();
+                    })
+                    ->searchable()
+                    ->tooltip(function ($record) {
+                        return $record->items->map(function ($item) {
+                            return $item->barangMaster->nama_barang ?? 'N/A';
+                        })->unique()->implode(', ');
+                    }),
+
+                TextColumn::make('items.barangMaster.nomor_batch')
+                    ->label('Nomor Batch')
+                    ->getStateUsing(function ($record) {
+                        $nomorBatch = $record->items->map(function ($item) {
+                            return $item->barangMaster->nomor_batch ?? 'N/A';
+                        })->unique()->take(2);
+                        return $nomorBatch->count() > 1
+                            ? $nomorBatch->implode(', ') . '...'
+                            : $nomorBatch->first();
+                    })
+                    ->searchable()
+                    ->tooltip(function ($record) {
+                        return $record->items->map(function ($item) {
+                            return $item->barangMaster->nomor_batch ?? 'N/A';
+                        })->unique()->implode(', ');
+                    }),
+
+                TextColumn::make('items.barangMaster.kadaluarsa')
+                    ->label('Kadaluarsa')
+                    ->getStateUsing(function ($record) {
+                        $kadaluarsa = $record->items->map(function ($item) {
+                            $kadaluarsaDate = $item->barangMaster->kadaluarsa;
+                            if ($kadaluarsaDate instanceof \DateTime) {
+                                return $kadaluarsaDate->format('d-m-Y');
+                            } elseif (is_string($kadaluarsaDate)) {
+                                return $kadaluarsaDate;
+                            }
+                            return 'N/A';
+                        })->unique()->take(2);
+                        return $kadaluarsa->count() > 1
+                            ? $kadaluarsa->implode(', ') . '...'
+                            : $kadaluarsa->first();
+                    })
+                    ->sortable()
+                    ->tooltip(function ($record) {
+                        return $record->items->map(function ($item) {
+                            $kadaluarsaDate = $item->barangMaster->kadaluarsa;
+                            if ($kadaluarsaDate instanceof \DateTime) {
+                                return $kadaluarsaDate->format('d-m-Y');
+                            } elseif (is_string($kadaluarsaDate)) {
+                                return $kadaluarsaDate;
+                            }
+                            return 'N/A';
+                        })->unique()->implode(', ');
+                    }),
+
+                TextColumn::make('items.barangMaster.satuan')
+                    ->label('Satuan')
+                    ->getStateUsing(function ($record) {
+                        return $record->items->map(function ($item) {
+                            return $item->barangMaster->satuan ?? 'N/A';
+                        })->unique()->implode(', ');
+                    }),
+
                 TextColumn::make('total_harga')
                     ->label('Total Harga')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')), // Format for display
+                    ->getStateUsing(function ($record) {
+                        return $record->items->sum('total_harga');
+                    })
+                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))
+                    ->sortable(),
             ])
-            ->filters([])
+            ->filters([
+                Tables\Filters\Filter::make('items_not_empty')
+                    ->label('Transaksi dengan Barang')
+                    ->query(fn (Builder $query) => $query->has('items'))
+            ])
             ->actions([Tables\Actions\EditAction::make()])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
@@ -120,5 +235,14 @@ class BarangTransaksiResource extends Resource
             'create' => Pages\CreateBarangTransaksi::route('/create'),
             'edit' => Pages\EditBarangTransaksi::route('/{record}/edit'),
         ];
+    }
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Transaksi Barang';
+    }
+
+    public static function getSlug(): string
+    {
+        return 'transaksi-alokon';
     }
 }

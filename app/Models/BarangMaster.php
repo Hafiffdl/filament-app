@@ -12,8 +12,14 @@ class BarangMaster extends Model
     protected $fillable = ['nama_barang', 'nomor_batch', 'kadaluarsa', 'harga_satuan', 'satuan', 'sumber_dana', 'stock'];
 
     // Relasi ke BarangTransaksi
-    public function barangTransaksis()
+    public function barangTransaksi()
     {
         return $this->hasMany(barangTransaksi::class);
+
+    }
+
+    public function items()
+    {
+        return $this->hasMany(BarangTransaksiItem::class,'barang_transaksi_id');
     }
 }
