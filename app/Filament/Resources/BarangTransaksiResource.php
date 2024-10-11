@@ -69,7 +69,8 @@ class BarangTransaksiResource extends Resource
                         TextInput::make('harga_satuan')
                             ->label('Harga Satuan')
                             ->disabled()
-                            ->numeric(),
+                            ->numeric()
+                            ->dehydrated(),
 
                         TextInput::make('jumlah')
                             ->label('Jumlah')
