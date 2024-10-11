@@ -14,6 +14,8 @@ class FaskesResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
+    protected static ?string $modelLabel = 'Data Faskes';
+
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form->schema([
@@ -79,5 +81,9 @@ class FaskesResource extends Resource
             'create' => Pages\CreateFaskes::route('/create'),
             'edit' => Pages\EditFaskes::route('/{record}/edit'),
         ];
+    }
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Master Data';
     }
 }

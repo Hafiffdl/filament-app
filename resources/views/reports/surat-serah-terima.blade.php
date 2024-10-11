@@ -114,7 +114,8 @@
 
     <div class="document-number">Nomor: {{ $suratSerahTerima->nomor }}</div>
 
-    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->isoFormat('dddd') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->isoFormat('D') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->isoFormat('MMMM') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->isoFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
+    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
+
 
     <ol>
         <li>
@@ -136,7 +137,8 @@
 
     <p>dalam hal ini bertindak dan atas nama Jabatan tersebut di atas yang selanjutnya dalam Berita Acara ini disebut PIHAK KEDUA</p>
 
-    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->format('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->format('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
+    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
+
 
     <table>
         <tr>

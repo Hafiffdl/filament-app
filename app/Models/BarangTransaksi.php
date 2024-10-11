@@ -45,22 +45,22 @@ public function suratKeluars()
         return $items ?: 'Barang tidak ditemukan';
     }
 
-    protected static function booted()
-    {
-        static::saving(function ($item) {
-            $barang = $item->barangMaster; // Ambil barangMaster dari BarangTransaksiItem
-            if ($barang) {
-                $item->total_harga = $item->jumlah * $barang->harga_satuan; // Hitung total harga berdasarkan jumlah dan harga satuan barang
+    // protected static function booted()
+    // {
+    //     static::saving(function ($item) {
+    //         $barang = $item->barangMaster; // Ambil barangMaster dari BarangTransaksiItem
+    //         if ($barang) {
+    //             $item->total_harga = $item->jumlah * $barang->harga_satuan; // Hitung total harga berdasarkan jumlah dan harga satuan barang
 
-                // Pastikan stok tidak negatif
-                if ($barang->stock < $item->jumlah) {
-                    throw new Error("Stock tidak cukup untuk transaksi ini.");
-                }
+    //             // Pastikan stok tidak negatif
+    //             if ($barang->stock < $item->jumlah) {
+    //                 throw new Error("Stock tidak cukup untuk transaksi ini.");
+    //             }
 
-                // Update stok barang
-                $barang->stock -= $item->jumlah;
-                $barang->save(); // Simpan perubahan stok barang
-            }
-        });
-    }
+    //             // Update stok barang
+    //             $barang->stock -= $item->jumlah;
+    //             $barang->save(); // Simpan perubahan stok barang
+    //         }
+    //     });
+    // }
 }

@@ -18,6 +18,8 @@ class BarangMasterResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
+    protected static ?string $pluralModelLabel = 'Data Alokon';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -63,7 +65,7 @@ class BarangMasterResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nama_barang')->label('Nama Barang')->sortable(),
+                TextColumn::make('nama_barang')->label('Nama Barang')->sortable()->searchable(),
                 TextColumn::make('nomor_batch')->label('Nomor Batch')->sortable(),
                 TextColumn::make('kadaluarsa')->label('Kadaluarsa')->sortable(),
                 TextColumn::make('harga_satuan')->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))->label('Harga Satuan')->sortable(),
@@ -83,5 +85,15 @@ class BarangMasterResource extends Resource
             'create' => Pages\CreateBarangMaster::route('/create'),
             'edit' => Pages\EditBarangMaster::route('/{record}/edit'),
         ];
+    }
+
+    public static function getSlug(): string
+    {
+        return 'data-alokon';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Master Data';
     }
 }

@@ -10,6 +10,3 @@ Route::get('/', function () {
 
 Route::get('/admin/reports/surat-keluar/{id}', [ReportController::class, 'printSuratKeluar'])->name('print.surat-keluar');
 Route::get('/admin/reports/surat-serah-terima/{id}', [ReportController::class, 'printSuratSerahTerima'])->name('print.surat-serah-terima');
-Route::get('/test', function() {
-    return view('test');
-});

@@ -6,22 +6,34 @@
     <title>Surat Bukti Barang Keluar</title>
     <style>
         body {
-            font-family: 'Times New Roman', Times, serif;
+            font-family: Arial, sans-serif;
             margin: 20px;
             font-size: 12px;
         }
         .header {
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
+            height: 110px;
+        }
+        .divider {
+            border-top: 3px solid #000;
+            margin: 20px 0;
         }
         .logo {
-            width: 50px;
-            float: left;
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 450;
+        }
+        .title-container {
+            display: inline-block;
+            text-align: center;
+            width: 100%;
         }
         .title {
-            font-weight: bold;
-            font-size: 16px;
-            margin: 5px 0;
+            font-size: 12px;
+            margin: 2px 0;
         }
         .subtitle {
             font-size: 14px;
@@ -31,7 +43,7 @@
         .document-title {
             text-align: center;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             margin: 20px 0;
         }
         table {
@@ -104,13 +116,22 @@
     </style>
 </head>
 <body>
-    <div class="header">
+<div class="header">
         <div class="logo">
-            <img src="logo-jkt.png" style="width: 150px; height: 100px;"/>
+            <img src="logo-jkt.png" alt="Logo Jakarta" style="width: 150px; height: 100px;"/>
         </div>
-        <div class="title">Sudin PPAPP Kota Administrasi Jakarta Timur</div>
-        <div class="subtitle">JL. P. Revolusi Pondok Bambu, Duren Sawit, Jakarta Timur</div>
+        <div class="title-container">
+            <div class="title">PEMERINTAH PROVINSI DAERAH KHUSUS IBUKOTA JAKARTA</div>
+            <div class="title">DINAS PEMBERDAYAAN, PERLINDUNGAN ANAK DAN PENGENDALIAN PENDUDUK</div>
+            <div class="title" style="font-weight: bold;">SUKU DINAS PEMBERDAYAAN PERLINDUNGAN ANAK DAN</div>
+            <div class="title" style="font-weight: bold;">PENGENDALIAN PENDUDUK KOTA ADMINISTRASI JAKARTA TIMUR</div>
+            <div>JL. PAHLAWAN REVOLUSI, PONDOK BAMBU</div>
+            <div>TELP. : 8612584, FAX. : 8612584</div>
+            <div>JAKARTA</div>
+        </div>
     </div>
+
+    <div class="divider"></div>
 
     <div class="document-title">SURAT BUKTI BARANG KELUAR</div>
 
@@ -118,7 +139,7 @@
         <tr>
             <td class="no-border" style="width: 0px;">NOMOR</td>
             <td class="no-border" style="width: 200px;">: {{ $suratKeluar->nomor }}</td>
-            <td class="no-border" style="text-align: right;">TANGGAL: {{ $suratKeluar->tanggal ? $suratKeluar->tanggal->format('d F Y') : 'N/A' }}</td>
+            <td class="no-border" style="text-align: right;">TANGGAL: {{ $suratKeluar->tanggal ? $suratKeluar->tanggal->isoFormat('D MMMM YYYY') : 'N/A' }}</td>
         </tr>
     </table>
 
@@ -150,7 +171,7 @@
                 <span class="box-label">BERDASARKAN SPMB NOMOR : {{ $suratKeluar->spmb_nomor }}</span>
             </div>
             <div class="box-item">
-                <span class="box-label">TANGGAL : {{ $suratKeluar->tanggal ? $suratKeluar->tanggal->format('d F Y') : 'N/A' }}</span>
+                <span class="box-label">TANGGAL : {{ $suratKeluar->tanggal ? $suratKeluar->tanggal->isoFormat('D MMMM YYYY') : 'N/A' }}</span>
             </div>
         </div>
         <div class="box-row">
@@ -198,7 +219,7 @@
                     <td>{{ $item->jumlah }}</td>
                     <td>{{ $item->barangMaster->satuan }}</td>
                     <td>{{ $item->barangMaster->nomor_batch }}</td>
-                    <td>{{ $item->barangMaster->kadaluarsa }}</td>
+                    <td>{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->isoFormat('D MMMM YYYY') : 'N/A' }}</td>
                     <td>Rp{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
                     <td>Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
                     <td>{{ $item->barangMaster->sumber_dana }}</td>
