@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables;
+use Carbon\Carbon;
 
 class SuratKeluarResource extends Resource
 {
@@ -28,11 +29,15 @@ class SuratKeluarResource extends Resource
     {
         return $form->schema([
             TextInput::make('nomor')
-                ->required()
-                ->label('Nomor Surat'),
-            TextInput::make('spmb_nomor')
-                ->required()
-                ->label('SPMB'),
+            ->required()
+            ->label('Nomor Surat')
+            ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/')  // Izinkan karakter /, titik, dll.
+            ->maxLength(50),
+
+        TextInput::make('spmb_nomor')
+            ->required()
+            ->label('SPMB')
+            ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/'),
             DatePicker::make('tanggal')
                 ->required()
                 ->label('Tanggal Surat'),
@@ -84,16 +89,17 @@ class SuratKeluarResource extends Resource
             TextColumn::make('nomor')
                 ->label('Nomor Surat')
                 ->sortable()
-                ->searchable(),
-            TextColumn::make('tanggal')
-                ->date()
+                ->searchable()
+                ->getStateUsing(fn ($record) => $record->nomor),  // Tampilkan dengan format asli
+                TextColumn::make('tanggal')
                 ->label('Tanggal Surat')
-                ->getStateUsing(fn ($record) => date('d F Y', strtotime($record->tanggal)))
+                ->date()
                 ->sortable(),
-            TextColumn::make('spmb_nomor')
+                TextColumn::make('spmb_nomor')
                 ->label('SPMB')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->getStateUsing(fn ($record) => $record->spmb_nomor),  // Tampilkan dengan format asli
             TextColumn::make('faskes.nama')
                 ->label('Faskes')
                 ->sortable()
