@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Error;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class BarangTransaksi extends Model
 {
@@ -25,15 +25,23 @@ class BarangTransaksi extends Model
     }
 
     public function itemsWithMaster()
-{
-    return $this->hasMany(BarangTransaksiItem::class, 'barang_transaksi_id')
-                ->with('barangMaster');
-}
+    {
+        return $this->hasMany(BarangTransaksiItem::class, 'barang_transaksi_id')
+                    ->with('barangMaster');
+    }
 
-public function suratKeluars()
-{
-    return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi', 'barang_transaksi_id', 'surat_keluar_id');
-}
+    public function suratKeluars()
+    {
+        return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi', 'barang_transaksi_id', 'surat_keluar_id');
+    }
+
+    // Scope untuk mengambil data 6 bulan terakhir berdasarkan faskes
+    public function scopeByFaskesAndLastSixMonths($query, $faskesId)
+    {
+        $sixMonthsAgo = Carbon::now()->subMonths(6);
+        return $query->where('faskes_id', $faskesId)
+                     ->where('tanggal_transaksi', '>=', $sixMonthsAgo);
+    }
 
     public function getDetailAttribute()
     {
@@ -44,23 +52,5 @@ public function suratKeluars()
 
         return $items ?: 'Barang tidak ditemukan';
     }
-
-    // protected static function booted()
-    // {
-    //     static::saving(function ($item) {
-    //         $barang = $item->barangMaster; // Ambil barangMaster dari BarangTransaksiItem
-    //         if ($barang) {
-    //             $item->total_harga = $item->jumlah * $barang->harga_satuan; // Hitung total harga berdasarkan jumlah dan harga satuan barang
-
-    //             // Pastikan stok tidak negatif
-    //             if ($barang->stock < $item->jumlah) {
-    //                 throw new Error("Stock tidak cukup untuk transaksi ini.");
-    //             }
-
-    //             // Update stok barang
-    //             $barang->stock -= $item->jumlah;
-    //             $barang->save(); // Simpan perubahan stok barang
-    //         }
-    //     });
-    // }
 }
+

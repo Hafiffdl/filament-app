@@ -140,6 +140,10 @@ class BarangTransaksiResource extends Resource
                     ->label('Faskes')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('tanggal_transaksi')
+                    ->label('Tanggal Transaksi')
+                    ->date()
+                    ->sortable(),
 
                 TextColumn::make('items.barangMaster.nama_barang')
                     ->label('Nama Barang')
@@ -217,7 +221,7 @@ class BarangTransaksiResource extends Resource
                     ->getStateUsing(function ($record) {
                         return $record->items->sum('total_harga');
                     })
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))
+                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 2, ',', '.'))
                     ->sortable(),
             ])
             ->filters([
