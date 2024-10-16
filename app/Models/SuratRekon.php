@@ -10,7 +10,7 @@ class SuratRekon extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nomor', 'spmb_nomor', 'tanggal', 'faskes_id', 'total_harga', 'start_date', 'end_date'
+        'nomor', 'tanggal', 'faskes_id', 'total_harga', 'start_date', 'end_date'
     ];
 
     public function barangTransaksis()
@@ -21,6 +21,11 @@ class SuratRekon extends Model
     public function suratKeluars()
     {
         return $this->belongsToMany(SuratKeluar::class, 'surat_rekon_surat_keluar', 'surat_rekon_id', 'surat_keluar_id');
+    }
+
+    public function suratBasts()
+    {
+        return $this->belongsToMany(SuratBast::class, 'surat_rekon_surat_bast', 'surat_rekon_id', 'surat_bast_id');
     }
 
     public function faskes()

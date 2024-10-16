@@ -31,13 +31,11 @@ class SuratRekonResource extends Resource
         return $form->schema([
             TextInput::make('nomor')
                 ->required()
-                ->label('Nomor Surat'),
-            TextInput::make('spmb_nomor')
-                ->required()
-                ->label('SPMB'),
+                ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/')
+                ->label('Nomor Surat Rekon'),
             DatePicker::make('tanggal')
                 ->required()
-                ->label('Tanggal Surat'),
+                ->label('Tanggal Surat Rekon'),
             Select::make('faskes_id')
                 ->label('Faskes')
                 ->options(Faskes::pluck('nama', 'id')->toArray())
@@ -85,7 +83,6 @@ class SuratRekonResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nomor')->label('Nomor Surat'),
-                Tables\Columns\TextColumn::make('spmb_nomor')->label('SPMB'),
                 Tables\Columns\TextColumn::make('tanggal')->label('Tanggal Surat')->date(),
                 Tables\Columns\TextColumn::make('faskes.nama')->label('Faskes'),
                 Tables\Columns\TextColumn::make('start_date')->label('Tanggal Awal')->date(),

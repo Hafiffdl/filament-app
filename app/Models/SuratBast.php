@@ -2,34 +2,34 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SuratKeluar extends Model
+class SuratBast extends Model
 {
     use HasFactory;
 
-    protected $table = 'surat_keluar';
+    protected $table = 'surat_bast';  // Define the table name
+
     protected $fillable = [
         'nomor',
         'tanggal',
         'faskes_id',
-        'barang_master_id',
         'transaction_date',
+
+        'barang_master_id',
         'jumlah',
         'total_harga',
         'kadaluarsa',
         'harga_satuan',
-        'tanggal_transaksi',
         'kode_faskes',
         'spmb_nomor',
         'nama', 'alamat', 'nama_penanggung_jawab', 'nip_penanggung_jawab', 'nama_pengurus_barang', 'nip_pengurus_barang'
-
     ];
+
     protected $casts = [
         'tanggal' => 'date',
-        'transaction_date' => 'date',
+        'transaction_date' => 'date'
     ];
 
     protected $dates = ['kadaluarsa'];
@@ -41,14 +41,6 @@ class SuratKeluar extends Model
 
     public function barangTransaksis()
     {
-        return $this->belongsToMany(BarangTransaksi::class, 'surat_keluar_barang_transaksi', 'surat_keluar_id', 'barang_transaksi_id');
+        return $this->belongsToMany(BarangTransaksi::class, 'surat_bast_barang_transaksi', 'surat_bast_id', 'barang_transaksi_id');
     }
-
-    public function scopeByFaskesAndLastSixMonths($query, $faskesId)
-    {
-        $sixMonthsAgo = Carbon::now()->subMonths(6);
-        return $query->where('faskes_id', $faskesId)
-                     ->where('tanggal', '>=', $sixMonthsAgo);
-    }
-
 }

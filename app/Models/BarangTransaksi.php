@@ -35,6 +35,11 @@ class BarangTransaksi extends Model
         return $this->belongsToMany(SuratKeluar::class, 'surat_keluar_barang_transaksi', 'barang_transaksi_id', 'surat_keluar_id');
     }
 
+    public function suratBasts()
+    {
+        return $this->belongsToMany(SuratBast::class, 'surat_bast_barang_transaksi', 'barang_transaksi_id', 'surat_bast_id');
+    }
+
     // Scope untuk mengambil data 6 bulan terakhir berdasarkan faskes
     public function scopeByFaskesAndLastSixMonths($query, $faskesId)
     {

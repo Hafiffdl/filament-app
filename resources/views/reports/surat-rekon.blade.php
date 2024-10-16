@@ -130,7 +130,7 @@
         BERITA ACARA<br>SERAH TERIMA BARANG PERSEDIAAN<br>ALAT/OBAT KONTRASEPSI DAN NON KONTRASEPSI
     </div>
 
-    <div class="document-number">Nomor: {{ $suratRekon->spmb_nomor }}</div>
+    <div class="document-number">Nomor: {{ $suratRekon->nomor }}</div>
 
     <p>Pada hari ini {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
 

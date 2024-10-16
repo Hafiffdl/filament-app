@@ -2,47 +2,42 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SuratKeluarResource\Pages;
+use App\Filament\Resources\SuratBastResource\Pages;
 use App\Models\BarangTransaksi;
-use App\Models\SuratKeluar;
 use App\Models\Faskes;
+use App\Models\SuratBast;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Filament\Tables;
-use Carbon\Carbon;
 
-class SuratKeluarResource extends Resource
+class SuratBastResource extends Resource
 {
-    protected static ?string $model = SuratKeluar::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document';
+    protected static ?string $model = SuratBast::class;
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    // protected static ?string $modelLabel = 'Surat Keluar SBBK & BAST';
-    protected static ?string $pluralModelLabel = 'Surat SBBK';
+    protected static ?string $pluralModelLabel = 'Surat BAST';
 
-    protected static ?string $modelLabel = 'Surat SBBK';
+    protected static ?string $modelLabel = 'Surat BAST';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             TextInput::make('nomor')
             ->required()
-            ->label('Nomor Surat SBBK')
-            ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/')  // Izinkan karakter /, titik, dll.
-            ->maxLength(50),
-
-        TextInput::make('spmb_nomor')
-            ->required()
-            ->label('SPMB')
+            ->label('Nomor Surat BAST')
             ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/'),
+            DatePicker::make('tanggal')
+                ->required()
+                ->label('Tanggal Surat BAST'),
             DatePicker::make('tanggal_transaksi')
                 ->required()
-                ->label('Tanggal Transaksi SBBK'),
+                ->label('Tanggal Transaksi'),
             Select::make('faskes_id')
                 ->label('Faskes')
                 ->options(Faskes::pluck('nama', 'id'))
@@ -67,49 +62,66 @@ class SuratKeluarResource extends Resource
                 ->multiple()
                 ->required()
                 ->reactive()
-                ->afterStateUpdated(function ($state, callable $set) {
-                    $totalHarga = BarangTransaksi::whereIn('id', $state)
-                        ->with('items.barangMaster')
-                        ->get()
-                        ->sum(function ($transaksi) {
-                            return $transaksi->items->sum(function ($item) {
-                                return $item->jumlah * $item->barangMaster->harga_satuan;
-                            });
-                        });
-                    $set('total_harga', $totalHarga);
-                }),
-            TextInput::make('total_harga')
-                ->disabled()
-                ->label('Total Harga')
-                ->reactive()
-                ->afterStateHydrated(function (TextInput $component, $state) {
-                    $component->state(number_format($state, 2, ',', '.'));
-                })
-                ->dehydrateStateUsing(fn ($state) => str_replace([',', '.'], ['', '.'], $state)),
+                // ->afterStateUpdated(function ($state, callable $set) {
+                //     $totalHarga = BarangTransaksi::whereIn('id', $state)
+                //         ->with('items.barangMaster')
+                //         ->get()
+                //         ->sum(function ($transaksi) {
+                //             return $transaksi->items->sum(function ($item) {
+                //                 return $item->jumlah * $item->barangMaster->harga_satuan;
+                //             });
+                //         });
+                //     $set('total_harga', $totalHarga);
+                // }),
         ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table->columns([
             TextColumn::make('nomor')
-                ->label('Nomor Surat SBBK')
+                ->label('Nomor Surat')
                 ->sortable()
                 ->searchable()
-                ->getStateUsing(fn ($record) => $record->nomor),  // Tampilkan dengan format asli
-                TextColumn::make('tanggal_transaksi')
-                ->label('Tanggal Transaksi SBBK')
+                ->getStateUsing(fn ($record) => $record->nomor),
+            TextColumn::make('tanggal')
+                ->label('Tanggal Surat')
                 ->date()
                 ->sortable(),
-                TextColumn::make('spmb_nomor')
-                ->label('SPMB')
-                ->sortable()
-                ->searchable()
-                ->getStateUsing(fn ($record) => $record->spmb_nomor),  // Tampilkan dengan format asli
             TextColumn::make('faskes.nama')
                 ->label('Faskes')
                 ->sortable()
                 ->searchable(),
+                TextColumn::make('barangTransaksis.tanggal_transaksi')
+                ->label('Tanggal Transaksi')
+                ->getStateUsing(function ($record) {
+                    return $record->barangTransaksis->map(function ($transaksi) {
+                        $transactionDate = $transaksi->tanggal_transaksi;
+
+                        if ($transactionDate instanceof \DateTime) {
+                            return $transactionDate->format('d-m-Y');
+                        } elseif (is_string($transactionDate)) {
+                            return $transactionDate;
+                        }
+
+                        return 'N/A';  // Fallback if no valid date is found
+                    })->implode("\n");  // Use line breaks to separate multiple values
+                })
+                ->extraAttributes(['style' => 'white-space: pre-line;'])  // Ensure line breaks are displayed
+                ->tooltip(function ($record) {
+                    return $record->barangTransaksis->map(function ($transaksi) {
+                        $transactionDate = $transaksi->tanggal_transaksi;
+
+                        if ($transactionDate instanceof \DateTime) {
+                            return $transactionDate->format('d-m-Y');
+                        } elseif (is_string($transactionDate)) {
+                            return $transactionDate;
+                        }
+
+                        return 'N/A';
+                    })->implode(', ');  // Tooltip will show dates separated by commas
+                })
+                ->sortable()
+                ->date(),
             TextColumn::make('barangTransaksis.items.barangMaster.nama_barang')
                 ->label('Nama Barang')
                 ->getStateUsing(function ($record) {
@@ -203,25 +215,26 @@ class SuratKeluarResource extends Resource
 
                     return 'Rp. ' . number_format($totalHarga, 2, ',', '.');
                 }),
-        ])
-        ->actions([
-            Action::make('printSBBK')
-                ->label('Print SBBK')
-                ->icon('heroicon-o-printer')
-                ->url(fn (SuratKeluar $record) => route('print.surat-keluar', $record->id))
-                ->openUrlInNewTab(),
-        ])
-        ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
+            ])
+            ->actions([
+                Action::make('printBAST')
+                    ->label('Print BAST')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn (SuratBast $record) => route('print.surat-serah-terima', $record->id))
+                    ->openUrlInNewTab(),
+            ])
+            ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSuratKeluars::route('/'),
-            'create' => Pages\CreateSuratKeluar::route('/create'),
-            'edit' => Pages\EditSuratKeluar::route('/{record}/edit'),
+            'index' => Pages\ListSuratBasts::route('/'),
+            'create' => Pages\CreateSuratBast::route('/create'),
+            'edit' => Pages\EditSuratBast::route('/{record}/edit'),
         ];
     }
+
     public static function getNavigationGroup(): ?string
     {
         return 'Laporan';
@@ -229,6 +242,6 @@ class SuratKeluarResource extends Resource
 
     public static function getSlug(): string
     {
-        return 'surat-keluar';
+        return 'surat-bast';
     }
 }
