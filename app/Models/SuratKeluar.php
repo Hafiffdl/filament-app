@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,6 +40,13 @@ class SuratKeluar extends Model
     public function barangTransaksis()
     {
         return $this->belongsToMany(BarangTransaksi::class, 'surat_keluar_barang_transaksi', 'surat_keluar_id', 'barang_transaksi_id');
+    }
+
+    public function scopeByFaskesAndLastSixMonths($query, $faskesId)
+    {
+        $sixMonthsAgo = Carbon::now()->subMonths(6);
+        return $query->where('faskes_id', $faskesId)
+                     ->where('tanggal', '>=', $sixMonthsAgo);
     }
 
 }

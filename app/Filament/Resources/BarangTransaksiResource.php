@@ -26,8 +26,9 @@ class BarangTransaksiResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-
     protected static ?string $pluralModelLabel = 'Transaksi Alokon';
+
+    protected static ?string $modelLabel = 'Transaksi Alokon';
 
     public static function form(Form $form): Form
     {
@@ -140,19 +141,22 @@ class BarangTransaksiResource extends Resource
                     ->label('Faskes')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('tanggal_transaksi')
+                    ->label('Tanggal Transaksi')
+                    ->date()
+                    ->sortable(),
 
                 TextColumn::make('items.barangMaster.nama_barang')
                     ->label('Nama Barang')
                     ->getStateUsing(function ($record) {
-                        $namaBarang = $record->items->map(function ($item) {
+                        // Gunakan "\n" untuk pemisah baris baru
+                        return $record->items->map(function ($item) {
                             return $item->barangMaster->nama_barang ?? 'N/A';
-                        })->unique()->take(2);
-                        return $namaBarang->count() > 1
-                            ? $namaBarang->implode(', ') . '...'
-                            : $namaBarang->first();
+                        })->unique()->implode("\n");
                     })
-                    ->searchable()
+                    ->extraAttributes(['style' => 'white-space: pre-line;']) // Agar line break tampil
                     ->tooltip(function ($record) {
+                        // Tooltip tetap menampilkan semua barang dalam satu baris
                         return $record->items->map(function ($item) {
                             return $item->barangMaster->nama_barang ?? 'N/A';
                         })->unique()->implode(', ');
@@ -161,24 +165,23 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('items.barangMaster.nomor_batch')
                     ->label('Nomor Batch')
                     ->getStateUsing(function ($record) {
-                        $nomorBatch = $record->items->map(function ($item) {
+                        // Gunakan "\n" untuk pemisah baris baru
+                        return $record->items->map(function ($item) {
                             return $item->barangMaster->nomor_batch ?? 'N/A';
-                        })->unique()->take(2);
-                        return $nomorBatch->count() > 1
-                            ? $nomorBatch->implode(', ') . '...'
-                            : $nomorBatch->first();
+                        })->unique()->implode("\n");
                     })
-                    ->searchable()
+                    ->extraAttributes(['style' => 'white-space: pre-line;']) // Agar line break tampil
                     ->tooltip(function ($record) {
+                        // Tooltip tetap menampilkan semua nomor batch dalam satu baris
                         return $record->items->map(function ($item) {
                             return $item->barangMaster->nomor_batch ?? 'N/A';
                         })->unique()->implode(', ');
                     }),
 
-                TextColumn::make('items.barangMaster.kadaluarsa')
+                    TextColumn::make('items.barangMaster.kadaluarsa')
                     ->label('Kadaluarsa')
                     ->getStateUsing(function ($record) {
-                        $kadaluarsa = $record->items->map(function ($item) {
+                        return $record->items->map(function ($item) {
                             $kadaluarsaDate = $item->barangMaster->kadaluarsa;
                             if ($kadaluarsaDate instanceof \DateTime) {
                                 return $kadaluarsaDate->format('d-m-Y');
@@ -186,12 +189,9 @@ class BarangTransaksiResource extends Resource
                                 return $kadaluarsaDate;
                             }
                             return 'N/A';
-                        })->unique()->take(2);
-                        return $kadaluarsa->count() > 1
-                            ? $kadaluarsa->implode(', ') . '...'
-                            : $kadaluarsa->first();
+                        })->implode("\n"); // Tetap gunakan line break tanpa menghapus duplikat
                     })
-                    ->sortable()
+                    ->extraAttributes(['style' => 'white-space: pre-line;']) // Agar line break tampil
                     ->tooltip(function ($record) {
                         return $record->items->map(function ($item) {
                             $kadaluarsaDate = $item->barangMaster->kadaluarsa;
@@ -201,12 +201,18 @@ class BarangTransaksiResource extends Resource
                                 return $kadaluarsaDate;
                             }
                             return 'N/A';
-                        })->unique()->implode(', ');
+                        })->implode(', '); // Tampilkan semua tanggal dengan koma tanpa menghapus duplikat
                     }),
 
                 TextColumn::make('items.barangMaster.satuan')
                     ->label('Satuan')
                     ->getStateUsing(function ($record) {
+                        return $record->items->map(function ($item) {
+                            return $item->barangMaster->satuan ?? 'N/A';
+                        })->unique()->implode("\n"); // Gunakan line break
+                    })
+                    ->extraAttributes(['style' => 'white-space: pre-line;'])
+                    ->tooltip(function ($record) {
                         return $record->items->map(function ($item) {
                             return $item->barangMaster->satuan ?? 'N/A';
                         })->unique()->implode(', ');
@@ -217,7 +223,7 @@ class BarangTransaksiResource extends Resource
                     ->getStateUsing(function ($record) {
                         return $record->items->sum('total_harga');
                     })
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))
+                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 2, ',', '.'))
                     ->sortable(),
             ])
             ->filters([

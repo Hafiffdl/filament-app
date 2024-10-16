@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\SuratKeluarResource\Pages;
+namespace App\Filament\Resources\SuratRekonResource\Pages;
 
-use App\Filament\Resources\SuratKeluarResource;
+use App\Filament\Resources\SuratRekonResource;
+use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateSuratKeluar extends CreateRecord
+class CreateSuratRekon extends CreateRecord
 {
-    protected static string $resource = SuratKeluarResource::class;
-
+    protected static string $resource = SuratRekonResource::class;
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['nomor'] = str_replace('/', '-', $data['nomor']);
-        $data['spmb_nomor'] = str_replace('/', '-', $data['spmb_nomor']);
-
         $barangTransaksiIds = $data['barang_transaksi_ids'];
         unset($data['barang_transaksi_ids']);
 

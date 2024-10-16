@@ -19,6 +19,7 @@ class BarangMasterResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
     protected static ?string $pluralModelLabel = 'Data Alokon';
+    protected static ?string $modelLabel = 'Data Alokon';
 
     public static function form(Form $form): Form
     {
@@ -68,14 +69,14 @@ class BarangMasterResource extends Resource
                 TextColumn::make('nama_barang')->label('Nama Barang')->sortable()->searchable(),
                 TextColumn::make('nomor_batch')->label('Nomor Batch')->sortable(),
                 TextColumn::make('kadaluarsa')->label('Kadaluarsa')->sortable(),
-                TextColumn::make('harga_satuan')->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))->label('Harga Satuan')->sortable(),
+                TextColumn::make('harga_satuan')->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 2, ',', '.'))->label('Harga Satuan')->sortable(),
                 TextColumn::make('satuan')->label('Satuan')->sortable(),
                 TextColumn::make('sumber_dana')->label('Sumber Dana')->sortable(),
                 TextColumn::make('stock')->label('Stock')->sortable(),
             ])
             ->filters([])
             ->actions([Tables\Actions\EditAction::make()])
-            ->bulkActions([]);
+            ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 
     public static function getPages(): array
