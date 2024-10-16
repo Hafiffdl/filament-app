@@ -1,0 +1,13 @@
+.filament-login-page {
+    background-color: transparent;
+}
+
+.layout-sidebar {
+    margin-left: 0rem; /* Sesuaikan ini untuk memperkecil jarak */
+    padding-left: 0.5rem; /* Sesuaikan padding jika perlu */
+}
+
+/* Atur jarak di konten utama agar lebih rapat */
+.layout-content {
+    padding-left: 0.5rem; /* Sesuaikan ini untuk memperkecil jarak dari sidebar */
+}

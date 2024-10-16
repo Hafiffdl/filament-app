@@ -78,7 +78,7 @@
         .signature-section {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         .signature-block {
             text-align: center;
@@ -86,7 +86,7 @@
         }
         .center-signature {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 20px;
         }
         .label-container {
             display: block;
@@ -130,14 +130,13 @@
         BERITA ACARA<br>SERAH TERIMA BARANG PERSEDIAAN<br>ALAT/OBAT KONTRASEPSI DAN NON KONTRASEPSI
     </div>
 
-    <div class="document-number">Nomor: {{ $suratSerahTerima->spmb_nomor }}</div>
+    <div class="document-number">Nomor: {{ $suratRekon->spmb_nomor }}</div>
 
-    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
-
+    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
 
     <ol>
         <li>
-            <div class="label-container">
+        <div class="label-container">
                 <span class="label">Nama</span>
                 <span class="separator">:</span>
                 <span class="value">Winda Ulaya Hanafi</span>
@@ -155,19 +154,19 @@
         </li>
     </ol>
 
-    <p>dalam hal ini bertindak untuk dan atas nama Kepala Sudin Pemberdayaan, Perlindungan Anak dan Pengendalian Penduduk Kota Administrasi Jakarta Timur, yang selanjutnya dalam Berita Acara ini disebut <strong>PIHAK PERTAMA</strong></p>
+    <p>dalam hal ini bertindak untuk dan atas nama Kepala Sudin Pemberdayaan, Perlindungan Anak dan Pengendalian Penduduk Kota Administrasi Jakarta Timur, yang selanjutnya dalam Berita Acara ini disebut <strong> PIHAK PERTAMA </strong></p>
 
     <ol start="2">
         <li>
             <div class="label-container">
                 <span class="label">Nama</span>
                 <span class="separator">:</span>
-                <span class="value">{{ $suratSerahTerima->faskes->nama_pengurus_barang ?? 'N/A' }}</span>
+                <span class="value">{{ $suratRekon->faskes->nama_pengurus_barang ?? 'N/A' }}</span>
             </div>
             <div class="label-container">
                 <span class="label">NIP</span>
                 <span class="separator">:</span>
-                <span class="value">{{ $suratSerahTerima->faskes->nip_pengurus_barang ?? 'N/A' }}</span>
+                <span class="value">{{ $suratRekon->faskes->nip_pengurus_barang ?? 'N/A' }}</span>
             </div>
             <div class="label-container">
                 <span class="label">Jabatan</span>
@@ -179,8 +178,7 @@
 
     <p>dalam hal ini bertindak dan atas nama Jabatan tersebut di atas yang selanjutnya dalam Berita Acara ini disebut <strong>PIHAK KEDUA</strong></p>
 
-    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
-
+    <p>Dengan mengingat telah melaksanakan penyerahan dan penerimaan barang persediaan alat/obat kontrasepsi dan non kontrasepsi pada bulan <span style="font-weight: bold;">{{ \Carbon\Carbon::parse($suratRekon->start_date)->locale('id')->translatedFormat('F') }} s/d {{ \Carbon\Carbon::parse($suratRekon->end_date)->locale('id')->translatedFormat('F') }}</span> dengan rincian sebagai berikut:</p>
 
     <table>
         <tr>
@@ -191,22 +189,44 @@
             <th>HARGA SATUAN BARANG</th>
             <th>JUMLAH</th>
         </tr>
-        @foreach($suratSerahTerima->barangTransaksis as $transaksi)
-            @foreach($transaksi->items as $item)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->jumlah }}</td>
-                    <td>{{ $item->barangMaster->satuan }}</td>
-                    <td>Rp {{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
-                    <td>Rp {{ number_format($item->total_harga, 2, ',', '.') }}</td>
-                </tr>
-            @endforeach
+        @php
+            $groupedItems = $suratRekon->barangTransaksis->flatMap(function ($transaksi) {
+                return $transaksi->items->map(function ($item) use ($transaksi) {
+                    return [
+                        'nama_barang' => $item->barangMaster->nama_barang,
+                        'nomor_batch' => $item->barangMaster->nomor_batch,
+                        'jumlah' => $item->jumlah,
+                        'satuan' => $item->barangMaster->satuan,
+                        'harga_satuan' => $item->barangMaster->harga_satuan,
+                    ];
+                });
+            })->groupBy(function ($item) {
+                return $item['nama_barang'] . '-' . $item['nomor_batch'];
+            });
+
+            $totalHarga = 0;
+        @endphp
+
+        @foreach($groupedItems as $key => $group)
+            @php
+                $totalJumlah = $group->sum('jumlah');
+                $hargaSatuan = $group->first()['harga_satuan'];
+                $jumlahHarga = $totalJumlah * $hargaSatuan;
+                $totalHarga += $jumlahHarga;
+            @endphp
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $group->first()['nama_barang'] }}</td>
+                <td>{{ $totalJumlah }}</td>
+                <td>{{ $group->first()['satuan'] }}</td>
+                <td>Rp {{ number_format($hargaSatuan, 2, ',', '.') }}</td>
+                <td>Rp {{ number_format($jumlahHarga, 2, ',', '.') }}</td>
+            </tr>
         @endforeach
         <tr class="subtotal-row">
             <td colspan="2" class="subtotal-label">SUB TOTAL</td>
             <td colspan="3"></td>
-            <td>Rp{{ number_format($suratSerahTerima->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
+            <td>Rp {{ number_format($totalHarga, 2, ',', '.') }}</td>
         </tr>
     </table>
 
@@ -221,9 +241,9 @@
                     <p>Winda Ulaya Hanafi<br>NIP. 197305021992032001</p>
                 </td>
                 <td style="width: 50%; text-align: center; border: none;">
-                    <p><strong>PIHAK KEDUA</strong><br>Pengurus Barang Pembantu<br>{{ $suratSerahTerima->faskes->nama ?? 'N/A' }}</p>
+                    <p><strong>PIHAK KEDUA</strong><br>Pengurus Barang Pembantu<br>{{ $suratRekon->faskes->nama ?? 'N/A' }}</p>
                     <br><br>
-                    <p>{{ $suratSerahTerima->faskes->nama_pengurus_barang ?? 'N/A' }}<br>NIP. {{ $suratSerahTerima->faskes->nip_pengurus_barang ?? 'N/A' }}</p>
+                    <p>{{ $suratRekon->faskes->nama_pengurus_barang ?? 'N/A' }}<br>NIP. {{ $suratRekon->faskes->nip_pengurus_barang ?? 'N/A' }}</p>
                 </td>
             </tr>
         </table>

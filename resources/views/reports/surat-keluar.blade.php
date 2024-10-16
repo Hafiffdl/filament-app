@@ -50,6 +50,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
+            font-size: 14px;
         }
         th, td {
             border: 1px solid black;
@@ -58,9 +59,9 @@
             font-size: 10px;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #fff;
         }
-        .no-border {
+          .no-border {
             border: none;
         }
         .checkbox {
@@ -75,10 +76,12 @@
         }
         .signature {
             margin-top: 20px;
+            font-size: 12px;
         }
         .inline-block {
             display: inline-block;
             margin-right: 10px;
+            font-size: 12px;
         }
         .right-align {
             text-align: right;
@@ -113,6 +116,29 @@
         table.no-border td {
             border: none;
         }
+        .label-container {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .label {
+            display: inline-block;
+            width: 100px; /* Sesuaikan lebar label */
+
+        }
+
+        .separator {
+            padding-right: 2px; /* Jarak antara titik dua dan value */
+        }
+
+        .value {
+            display: inline-block;
+        }
+        .recipient-info {
+            border: 1px solid black;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -144,14 +170,26 @@
     </table>
 
     <div class="recipient-info">
-        <p>KEPADA      : {{ $suratKeluar->faskes->nama ?? 'N/A' }}</p>
-        <p>ALAMAT      : {{ $suratKeluar->faskes->alamat ?? 'N/A' }}</p>
-        <p>KODE FASKES : {{ $suratKeluar->faskes->kode_faskes ?? 'N/A' }}</p>
+        <div class="label-container">
+            <span class="label">KEPADA</span>
+            <span class="separator">:</span>
+            <span class="value">{{ $suratKeluar->faskes->nama ?? 'N/A' }}</span>
+        </div>
+        <div class="label-container">
+            <span class="label">ALAMAT</span>
+            <span class="separator">:</span>
+            <span class="value">{{ $suratKeluar->faskes->alamat ?? 'N/A' }}</span>
+        </div>
+        <div class="label-container">
+            <span class="label">KODE FASKES</span>
+            <span class="separator">:</span>
+            <span class="value">{{ $suratKeluar->faskes->kode_faskes ?? 'N/A' }}</span>
+        </div>
     </div>
 
     <table class="no-border">
         <tr>
-            <td class="no-border" style="width: 150px;">Untuk Keperluan</td>
+            <td class="no-border" style="width: 150px; font-size: 12px;">Untuk Keperluan</td>
             <td class="no-border">
                 <label class="inline-block">
                     <span class="checkbox {{ $suratKeluar->keperluan == 'Distribusi Rutin' ? 'checked' : '' }}"></span>
@@ -219,7 +257,7 @@
                     <td>{{ $item->jumlah }}</td>
                     <td>{{ $item->barangMaster->satuan }}</td>
                     <td>{{ $item->barangMaster->nomor_batch }}</td>
-                    <td>{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->isoFormat('D MMMM YYYY') : 'N/A' }}</td>
+                    <td>{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->format('Y-m-d') : 'N/A' }}</td>
                     <td>Rp{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
                     <td>Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
                     <td>{{ $item->barangMaster->sumber_dana }}</td>
@@ -236,16 +274,16 @@
     </table>
 
     <div class="signature" style="font-size: 20px;">
-    <table class="no-border" style="border: none; width: 100%;">
+    <table class="no-border" style="border: none; width: 100%; font-size: 20px">
         <tr>
-            <td>Jakarta Timur, ...........</td>
+            <td style="font-size: 12px;">Jakarta Timur, ...........</td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td>Yang mengeluarkan<br>Bendahara Materiil</td>
-            <td>Yang Mengangkut<br>Mengambil/Mengantar</td>
-            <td style="text-align: center;">Yang Menerima</td>
+            <td style="font-size: 12px;">Yang mengeluarkan<br>Bendahara Materiil</td>
+            <td style="font-size: 12px;">Yang Mengangkut<br>Mengambil/Mengantar</td>
+            <td style="text-align: center; font-size: 12px;">Yang Menerima</td>
         </tr>
         <tr>
         <td>
@@ -257,17 +295,17 @@
             <td style="text-align: right; padding-left: 0;">&nbsp;</td>
         </tr>
         <tr>
-            <td>
+            <td style="font-size: 12px;">
                 (Winda Ulaya)<br>
                 Pangkat: ..........................<br>
                 NIP: 197305021992032001
             </td>
-            <td>
+            <td style="font-size: 12px;">
                 (...............................)<br>
                 Pangkat: ..........................<br>
                 NIP: ................................
             </td>
-            <td style="text-align: center;">
+            <td style="text-align: center; font-size: 12px;">
                 Nama: .............................<br>
                 Pangkat: ..........................<br>
                 NIP: ................................

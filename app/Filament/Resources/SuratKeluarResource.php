@@ -25,6 +25,8 @@ class SuratKeluarResource extends Resource
     // protected static ?string $modelLabel = 'Surat Keluar SBBK & BAST';
     protected static ?string $pluralModelLabel = 'Surat Keluar SBBK & BAST';
 
+    protected static ?string $modelLabel = 'Surat Keluar';
+
     public static function form(Form $form): Form
     {
         return $form->schema([
