@@ -30,6 +30,6 @@ class ReportController extends Controller
         $suratRekon = SuratRekon::with(['faskes', 'barangTransaksis.items.barangMaster'])->findOrFail($id);
         $filename = 'surat-rekon-' . str_replace('/', '-', $suratRekon->nomor) . '.pdf';
         $pdf = PDF::loadView('reports.surat-rekon', compact('suratRekon'));
-        return $pdf->stream($filename);
+        return $pdf->stream('surat-rekon' . $suratRekon->nomor . '.pdf');
     }
 }
