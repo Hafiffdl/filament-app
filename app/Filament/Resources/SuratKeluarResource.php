@@ -20,7 +20,7 @@ use Carbon\Carbon;
 class SuratKeluarResource extends Resource
 {
     protected static ?string $model = SuratKeluar::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     // protected static ?string $modelLabel = 'Surat Keluar SBBK & BAST';
     protected static ?string $pluralModelLabel = 'Surat SBBK';

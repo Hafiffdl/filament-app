@@ -41,7 +41,7 @@ class BarangTransaksiResource extends Resource
                     ->searchable(),
 
                 DatePicker::make('tanggal_transaksi')
-                    ->label('Tanggal Transaksi')
+                    ->label('Tanggal SBBK')
                     ->required(),
 
                 Repeater::make('items')

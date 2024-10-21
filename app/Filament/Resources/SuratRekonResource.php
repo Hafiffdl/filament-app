@@ -30,9 +30,9 @@ class SuratRekonResource extends Resource
     {
         return $form->schema([
             TextInput::make('nomor')
-                ->required()
-                ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/')
-                ->label('Nomor Surat Rekon'),
+            ->required()
+            ->label('Nomor Surat Rekon')
+            ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/'),
             DatePicker::make('tanggal')
                 ->required()
                 ->label('Tanggal Surat Rekon'),
