@@ -24,15 +24,17 @@ class SuratKeluar extends Model
         'tanggal_transaksi',
         'kode_faskes',
         'spmb_nomor',
+        'spmb_tanggal',
         'nama', 'alamat', 'nama_penanggung_jawab', 'nip_penanggung_jawab', 'nama_pengurus_barang', 'nip_pengurus_barang'
 
     ];
     protected $casts = [
         'tanggal' => 'date',
         'transaction_date' => 'date',
+        'spmb_tanggal' => 'date',
     ];
 
-    protected $dates = ['kadaluarsa'];
+    protected $dates = ['kadaluarsa', 'spmb_tanggal'];
 
     public function faskes()
     {

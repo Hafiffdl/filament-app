@@ -11,8 +11,6 @@ class CreateSuratKeluar extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['nomor'] = str_replace('/', '-', $data['nomor']);
-        $data['spmb_nomor'] = str_replace('/', '-', $data['spmb_nomor']);
 
         $barangTransaksiIds = $data['barang_transaksi_ids'];
         unset($data['barang_transaksi_ids']);
