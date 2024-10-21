@@ -12,8 +12,6 @@ class CreateSuratBast extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
 
-        $data['nomor'] = str_replace('/', '-', $data['nomor']);
-
         $barangTransaksiIds = $data['barang_transaksi_ids'];
         unset($data['barang_transaksi_ids']);
 

@@ -16,7 +16,7 @@ class SuratBast extends Model
         'tanggal',
         'faskes_id',
         'transaction_date',
-
+        'tanggal_transaksi',
         'barang_master_id',
         'jumlah',
         'total_harga',
