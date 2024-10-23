@@ -15,13 +15,14 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
 
 class SuratBastResource extends Resource
 {
     protected static ?string $model = SuratBast::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?string $pluralModelLabel = 'Surat BAST';
+
     protected static ?string $modelLabel = 'Surat BAST';
 
     public static function form(Form $form): Form
@@ -36,8 +37,7 @@ class SuratBastResource extends Resource
                 ->label('Tanggal Surat BAST'),
             DatePicker::make('tanggal_transaksi')
                 ->required()
-                ->label('Tanggal Transaksi')
-                ->reactive(),
+                ->label('Tanggal Transaksi'),
             Select::make('faskes_id')
                 ->label('Faskes')
                 ->options(Faskes::pluck('nama', 'id'))
@@ -53,15 +53,10 @@ class SuratBastResource extends Resource
                     if (!$faskesId || !$transactionDate) return [];
 
                     return BarangTransaksi::where('faskes_id', $faskesId)
-                        ->whereDate('tanggal_transaksi', $transactionDate)
+                        ->whereDate('tanggal_transaksi', [$transactionDate])
                         ->with(['items.barangMaster'])
                         ->get()
-                        ->mapWithKeys(function ($transaksi) {
-                            $detail = $transaksi->items->map(function ($item) {
-                                return "{$item->barangMaster->nama_barang} - Batch: {$item->barangMaster->nomor_batch} - Jumlah: {$item->jumlah}";
-                            })->implode(', ');
-                            return [$transaksi->id => $detail];
-                        });
+                        ->pluck('detail', 'id');
                 })
                 ->multiple()
                 ->required()
@@ -75,7 +70,8 @@ class SuratBastResource extends Resource
             TextColumn::make('nomor')
                 ->label('Nomor Surat')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->getStateUsing(fn ($record) => $record->nomor),
             TextColumn::make('tanggal')
                 ->label('Tanggal Surat')
                 ->date()
@@ -84,30 +80,48 @@ class SuratBastResource extends Resource
                 ->label('Faskes')
                 ->sortable()
                 ->searchable(),
-            TextColumn::make('tanggal_transaksi')
+            TextColumn::make('barangTransaksis.tanggal_transaksi')
                 ->label('Tanggal Transaksi')
-                ->date()
-                ->sortable(),
+                ->getStateUsing(function ($record) {
+                    return $record->barangTransaksis->map(function ($transaksi) {
+                        $transactionDate = $transaksi->tanggal_transaksi;
+
+                        if ($transactionDate instanceof \DateTime) {
+                            return $transactionDate->format('d-m-Y');
+                        } elseif (is_string($transactionDate)) {
+                            return $transactionDate;
+                        }
+
+                        return 'N/A';
+                    })->implode("<br>");
+                })
+                ->extraAttributes(['style' => 'white-space: pre-line;'])
+                ->sortable()
+                ->html(),
             TextColumn::make('barangTransaksis.items.barangMaster.nama_barang')
                 ->label('Nama Barang')
                 ->getStateUsing(function ($record) {
-                    $namaBarang = $record->barangTransaksis->flatMap(function ($transaksi) {
-                        return $transaksi->items->map(function ($item) {
-                            return $item->barangMaster->nama_barang;
-                        });
-                    })->unique()->take(3);
-
-                    $displayText = $namaBarang->implode(', ');
-                    return $namaBarang->count() > 3 ? $displayText . '...' : $displayText;
-                })
-                ->tooltip(function ($record) {
                     return $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
                             return $item->barangMaster->nama_barang;
                         });
-                    })->unique()->implode(', ');
+                    })->unique()->implode("<br>");
                 })
-                ->wrap(),
+                ->extraAttributes(['style' => 'white-space: pre-line;'])
+                ->wrap()
+                ->html(),
+            TextColumn::make('barangTransaksis.items.barangMaster.nomor_batch')
+                ->label('Nomor Batch')
+                ->getStateUsing(function ($record) {
+                    return $record->barangTransaksis->flatMap(function ($transaksi) {
+                        return $transaksi->items->map(function ($item) {
+                            return $item->barangMaster->nomor_batch;
+                        });
+                    })->unique()->implode("<br>");
+                })
+                ->extraAttributes(['style' => 'white-space: pre-line;'])
+                ->wrap()
+                ->html(),
             TextColumn::make('barangTransaksis.items.jumlah')
                 ->label('Jumlah')
                 ->getStateUsing(function ($record) {
@@ -117,6 +131,18 @@ class SuratBastResource extends Resource
                         });
                     })->sum();
                 }),
+            TextColumn::make('barangTransaksis.items.barangMaster.harga_satuan')
+                ->label('Harga Satuan')
+                ->getStateUsing(function ($record) {
+                    return $record->barangTransaksis->flatMap(function ($transaksi) {
+                        return $transaksi->items->map(function ($item) {
+                            return 'Rp. ' . number_format($item->barangMaster->harga_satuan, 2, ',', '.');
+                        });
+                    })->unique()->implode("<br>");
+                })
+                ->extraAttributes(['style' => 'white-space: pre-line;'])
+                ->wrap()
+                ->html(),
             TextColumn::make('total_harga')
                 ->label('Total Harga')
                 ->getStateUsing(function ($record) {
@@ -129,21 +155,14 @@ class SuratBastResource extends Resource
                     return 'Rp. ' . number_format($totalHarga, 2, ',', '.');
                 }),
         ])
-        ->actions([
-            Action::make('printBAST')
-                ->label('Print BAST')
-                ->icon('heroicon-o-printer')
-                ->url(fn (SuratBast $record) => route('print.surat-serah-terima', $record->id))
-                ->openUrlInNewTab(),
-        ])
-        ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+            ->actions([
+                Action::make('printBAST')
+                    ->label('Print BAST')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn (SuratBast $record) => route('print.surat-serah-terima', $record->id))
+                    ->openUrlInNewTab(),
+            ])
+            ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 
     public static function getPages(): array
@@ -153,11 +172,6 @@ class SuratBastResource extends Resource
             'create' => Pages\CreateSuratBast::route('/create'),
             'edit' => Pages\EditSuratBast::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->with(['faskes', 'barangTransaksis.items.barangMaster']);
     }
 
     public static function getNavigationGroup(): ?string

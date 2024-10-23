@@ -35,13 +35,11 @@ class SuratKeluarResource extends Resource
             ->label('Nomor Surat SBBK')
             ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/')  // Izinkan karakter /, titik, dll.
             ->maxLength(50),
-            TextInput::make('spmb_nomor')
+
+        TextInput::make('spmb_nomor')
             ->required()
             ->label('SPMB')
             ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/'),
-            DatePicker::make('spmb_tanggal')
-            ->required()
-            ->label('Tanggal SPMB'),
             DatePicker::make('tanggal_transaksi')
                 ->required()
                 ->label('Tanggal Transaksi SBBK'),
@@ -107,61 +105,35 @@ class SuratKeluarResource extends Resource
                 ->label('SPMB')
                 ->sortable()
                 ->searchable()
-                ->getStateUsing(fn ($record) => $record->spmb_nomor),
-                TextColumn::make('spmb_tanggal')
-                ->label('Tanggal SPMB')
-                ->date()
-                ->sortable(),
+                ->getStateUsing(fn ($record) => $record->spmb_nomor),  // Tampilkan dengan format asli
             TextColumn::make('faskes.nama')
                 ->label('Faskes')
                 ->sortable()
                 ->searchable(),
-            TextColumn::make('barangTransaksis.items.barangMaster.nama_barang')
+                TextColumn::make('barangTransaksis.items.barangMaster.nama_barang')
                 ->label('Nama Barang')
                 ->getStateUsing(function ($record) {
-                    $namaBarang = $record->barangTransaksis->flatMap(function ($transaksi) {
-                        return $transaksi->items->map(function ($item) {
-                            return $item->barangMaster->nama_barang;
-                        });
-                    })->unique()->take(3);
-
-                    $displayText = $namaBarang->implode(', ');
-                    $fullText = $record->barangTransaksis->flatMap(function ($transaksi) {
-                        return $transaksi->items->map(function ($item) {
-                            return $item->barangMaster->nama_barang;
-                        });
-                    })->unique()->implode(', ');
-
-                    return $namaBarang->count() > 3 ? $displayText . '...' : $displayText;
-                })
-                ->tooltip(function ($record) {
                     return $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
                             return $item->barangMaster->nama_barang;
                         });
-                    })->unique()->implode(', ');
+                    })->unique()->implode("<br>");
                 })
-                ->wrap(),
+                ->extraAttributes(['style' => 'white-space: pre-line;'])
+                ->wrap()
+                ->html(),
             TextColumn::make('barangTransaksis.items.barangMaster.nomor_batch')
                 ->label('Nomor Batch')
                 ->getStateUsing(function ($record) {
-                    $nomorBatch = $record->barangTransaksis->flatMap(function ($transaksi) {
-                        return $transaksi->items->map(function ($item) {
-                            return $item->barangMaster->nomor_batch;
-                        });
-                    })->unique()->take(3);
-
-                    $displayText = $nomorBatch->implode(', ');
-                    return $nomorBatch->count() > 3 ? $displayText . '...' : $displayText;
-                })
-                ->tooltip(function ($record) {
                     return $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
                             return $item->barangMaster->nomor_batch;
                         });
-                    })->unique()->implode(', ');
+                    })->unique()->implode("<br>");
                 })
-                ->wrap(),
+                ->extraAttributes(['style' => 'white-space: pre-line;'])
+                ->wrap()
+                ->html(),
             TextColumn::make('barangTransaksis.items.jumlah')
                 ->label('Jumlah')
                 ->getStateUsing(function ($record) {
@@ -171,33 +143,18 @@ class SuratKeluarResource extends Resource
                         });
                     })->sum();
                 }),
-                TextColumn::make('barangTransaksis.items.barangMaster.harga_satuan')
+            TextColumn::make('barangTransaksis.items.barangMaster.harga_satuan')
                 ->label('Harga Satuan')
                 ->getStateUsing(function ($record) {
-                    $hargaSatuanList = $record->barangTransaksis->flatMap(function ($transaksi) {
+                    return $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
-                            return $item->barangMaster->harga_satuan;
+                            return 'Rp. ' . number_format($item->barangMaster->harga_satuan, 2, ',', '.');
                         });
-                    })->unique()->sort()->take(2);
-
-                    $displayText = $hargaSatuanList->map(function ($harga) {
-                        return 'Rp. ' . number_format($harga, 2, ',', '.');
-                    })->implode(', ');
-
-                    return $hargaSatuanList->count() > 2 ? $displayText . '...' : $displayText;
+                    })->unique()->implode("<br>");
                 })
-                ->tooltip(function ($record) {
-                    $hargaSatuanList = $record->barangTransaksis->flatMap(function ($transaksi) {
-                        return $transaksi->items->map(function ($item) {
-                            return $item->barangMaster->harga_satuan;
-                        });
-                    })->unique()->sort();
-
-                    return $hargaSatuanList->map(function ($harga) {
-                        return 'Rp. ' . number_format($harga, 2, ',', '.');
-                    })->implode(', ');
-                }),
-
+                ->extraAttributes(['style' => 'white-space: pre-line;'])
+                ->wrap()
+                ->html(),
             TextColumn::make('total_harga')
                 ->label('Total Harga')
                 ->getStateUsing(function ($record) {
