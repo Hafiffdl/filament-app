@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Berita Acara Serah Terima Barang Persediaan</title>
+    <title>Berita Acara Serah Terima</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -130,7 +130,7 @@
         BERITA ACARA<br>SERAH TERIMA BARANG PERSEDIAAN<br>ALAT/OBAT KONTRASEPSI DAN NON KONTRASEPSI
     </div>
 
-    <div class="document-number">Nomor: {{ $suratSerahTerima->spmb_nomor }}</div>
+    <div class="document-number">Nomor: {{ $suratSerahTerima->nomor }}</div>
 
     <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
 
@@ -179,8 +179,7 @@
 
     <p>dalam hal ini bertindak dan atas nama Jabatan tersebut di atas yang selanjutnya dalam Berita Acara ini disebut <strong>PIHAK KEDUA</strong></p>
 
-    <p>Pada hari ini {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratSerahTerima->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
-
+    <p>Dengan mengingat telah melaksanakan penyerahan dan penerimaan barang persediaan alat/obat kontrasepsi dan non kontrasepsi pada bulan dengan rincian sebagai berikut:</p>
 
     <table>
         <tr>

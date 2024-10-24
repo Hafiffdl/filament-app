@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Berita Acara Serah Terima Barang Persediaan</title>
+    <title>Berita Acara Serah Terima Rekon</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -130,7 +130,7 @@
         BERITA ACARA<br>SERAH TERIMA BARANG PERSEDIAAN<br>ALAT/OBAT KONTRASEPSI DAN NON KONTRASEPSI
     </div>
 
-    <div class="document-number">Nomor: {{ $suratRekon->spmb_nomor }}</div>
+    <div class="document-number">Nomor: {{ $suratRekon->nomor }}</div>
 
     <p>Pada hari ini {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('l') }} tanggal {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('d') }} bulan {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('F') }} tahun {{ \Carbon\Carbon::parse($suratRekon->tanggal)->locale('id')->translatedFormat('Y') }}, di Jakarta, kami yang bertanda tangan di bawah ini :</p>
 

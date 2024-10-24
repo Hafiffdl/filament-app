@@ -41,7 +41,7 @@ class BarangTransaksiResource extends Resource
                     ->searchable(),
 
                 DatePicker::make('tanggal_transaksi')
-                    ->label('Tanggal Transaksi')
+                    ->label('Tanggal SBBK')
                     ->required(),
 
                 Repeater::make('items')
@@ -141,6 +141,7 @@ class BarangTransaksiResource extends Resource
                     ->label('Faskes')
                     ->sortable()
                     ->searchable(),
+
                 TextColumn::make('tanggal_transaksi')
                     ->label('Tanggal Transaksi')
                     ->date()
@@ -149,36 +150,38 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('items.barangMaster.nama_barang')
                     ->label('Nama Barang')
                     ->getStateUsing(function ($record) {
-                        // Gunakan "\n" untuk pemisah baris baru
-                        return $record->items->map(function ($item) {
-                            return $item->barangMaster->nama_barang ?? 'N/A';
-                        })->unique()->implode("\n");
+                        $index = 1;
+                        $items = $record->items->map(function ($item) use (&$index) {
+                            return $index++ . '. ' . ($item->barangMaster->nama_barang ?? 'N/A');
+                        });
+                        return $items->implode("\n");
                     })
-                    ->extraAttributes(['style' => 'white-space: pre-line;']) // Agar line break tampil
+                    ->extraAttributes(['style' => 'white-space: pre-line;'])
                     ->tooltip(function ($record) {
-                        // Tooltip tetap menampilkan semua barang dalam satu baris
-                        return $record->items->map(function ($item) {
-                            return $item->barangMaster->nama_barang ?? 'N/A';
-                        })->unique()->implode(', ');
+                        $index = 1;
+                        return $record->items->map(function ($item) use (&$index) {
+                            return $index++ . '. ' . ($item->barangMaster->nama_barang ?? 'N/A');
+                        })->implode(', ');
                     }),
 
                 TextColumn::make('items.barangMaster.nomor_batch')
                     ->label('Nomor Batch')
                     ->getStateUsing(function ($record) {
-                        // Gunakan "\n" untuk pemisah baris baru
-                        return $record->items->map(function ($item) {
-                            return $item->barangMaster->nomor_batch ?? 'N/A';
-                        })->unique()->implode("\n");
+                        $index = 1;
+                        $items = $record->items->map(function ($item) use (&$index) {
+                            return $index++ . '. ' . ($item->barangMaster->nomor_batch ?? 'N/A');
+                        });
+                        return $items->implode("\n");
                     })
-                    ->extraAttributes(['style' => 'white-space: pre-line;']) // Agar line break tampil
+                    ->extraAttributes(['style' => 'white-space: pre-line;'])
                     ->tooltip(function ($record) {
-                        // Tooltip tetap menampilkan semua nomor batch dalam satu baris
-                        return $record->items->map(function ($item) {
-                            return $item->barangMaster->nomor_batch ?? 'N/A';
-                        })->unique()->implode(', ');
+                        $index = 1;
+                        return $record->items->map(function ($item) use (&$index) {
+                            return $index++ . '. ' . ($item->barangMaster->nomor_batch ?? 'N/A');
+                        })->implode(', ');
                     }),
 
-                    TextColumn::make('items.barangMaster.kadaluarsa')
+                TextColumn::make('items.barangMaster.kadaluarsa')
                     ->label('Kadaluarsa')
                     ->getStateUsing(function ($record) {
                         return $record->items->map(function ($item) {
@@ -189,9 +192,9 @@ class BarangTransaksiResource extends Resource
                                 return $kadaluarsaDate;
                             }
                             return 'N/A';
-                        })->implode("\n"); // Tetap gunakan line break tanpa menghapus duplikat
+                        })->implode("\n");
                     })
-                    ->extraAttributes(['style' => 'white-space: pre-line;']) // Agar line break tampil
+                    ->extraAttributes(['style' => 'white-space: pre-line;'])
                     ->tooltip(function ($record) {
                         return $record->items->map(function ($item) {
                             $kadaluarsaDate = $item->barangMaster->kadaluarsa;
@@ -201,7 +204,7 @@ class BarangTransaksiResource extends Resource
                                 return $kadaluarsaDate;
                             }
                             return 'N/A';
-                        })->implode(', '); // Tampilkan semua tanggal dengan koma tanpa menghapus duplikat
+                        })->implode(', ');
                     }),
 
                 TextColumn::make('items.barangMaster.satuan')
@@ -209,13 +212,13 @@ class BarangTransaksiResource extends Resource
                     ->getStateUsing(function ($record) {
                         return $record->items->map(function ($item) {
                             return $item->barangMaster->satuan ?? 'N/A';
-                        })->unique()->implode("\n"); // Gunakan line break
+                        })->implode("\n");
                     })
                     ->extraAttributes(['style' => 'white-space: pre-line;'])
                     ->tooltip(function ($record) {
                         return $record->items->map(function ($item) {
                             return $item->barangMaster->satuan ?? 'N/A';
-                        })->unique()->implode(', ');
+                        })->implode(', ');
                     }),
 
                 TextColumn::make('total_harga')
@@ -243,6 +246,7 @@ class BarangTransaksiResource extends Resource
             'edit' => Pages\EditBarangTransaksi::route('/{record}/edit'),
         ];
     }
+
     public static function getNavigationGroup(): ?string
     {
         return 'Transaksi Barang';

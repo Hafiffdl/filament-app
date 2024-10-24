@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\SuratKeluarResource\Pages;
+namespace App\Filament\Resources\SuratBastResource\Pages;
 
-use App\Filament\Resources\SuratKeluarResource;
+use App\Filament\Resources\SuratBastResource;
+use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateSuratKeluar extends CreateRecord
+class CreateSuratBast extends CreateRecord
 {
-    protected static string $resource = SuratKeluarResource::class;
-
+    protected static string $resource = SuratBastResource::class;
     protected function mutateFormDataBeforeCreate(array $data): array
     {
 

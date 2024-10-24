@@ -165,7 +165,7 @@
         <tr>
             <td class="no-border" style="width: 0px;">NOMOR</td>
             <td class="no-border" style="width: 200px;">: {{ $suratKeluar->nomor }}</td>
-            <td class="no-border" style="text-align: right;">TANGGAL: {{ $suratKeluar->tanggal ? $suratKeluar->tanggal->isoFormat('D MMMM YYYY') : 'N/A' }}</td>
+            <td class="no-border" style="text-align: right;">TANGGAL:  {{ optional($suratKeluar->barangTransaksis->first())->tanggal_transaksi ? \Carbon\Carbon::parse($suratKeluar->barangTransaksis->first()->tanggal_transaksi)->isoFormat('D MMMM YYYY') : 'N/A' }}</td>
         </tr>
     </table>
 
@@ -209,7 +209,7 @@
                 <span class="box-label">BERDASARKAN SPMB NOMOR : {{ $suratKeluar->spmb_nomor }}</span>
             </div>
             <div class="box-item">
-                <span class="box-label">TANGGAL : {{ $suratKeluar->tanggal ? $suratKeluar->tanggal->isoFormat('D MMMM YYYY') : 'N/A' }}</span>
+            <span class="box-label">TANGGAL : {{ $suratKeluar->spmb_tanggal ? \Carbon\Carbon::parse($suratKeluar->spmb_tanggal)->isoFormat('D MMMM YYYY') : 'N/A' }}</span>
             </div>
         </div>
         <div class="box-row">

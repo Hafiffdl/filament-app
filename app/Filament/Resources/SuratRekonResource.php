@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use Filament\Tables\Actions\Action;
-
 use App\Filament\Resources\SuratRekonResource\Pages;
 use App\Models\BarangTransaksi;
 use App\Models\Faskes;
@@ -31,13 +30,11 @@ class SuratRekonResource extends Resource
         return $form->schema([
             TextInput::make('nomor')
                 ->required()
-                ->label('Nomor Surat'),
-            TextInput::make('spmb_nomor')
-                ->required()
-                ->label('SPMB'),
+                ->label('Nomor Surat Rekon')
+                ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/'),
             DatePicker::make('tanggal')
                 ->required()
-                ->label('Tanggal Surat'),
+                ->label('Tanggal Surat Rekon'),
             Select::make('faskes_id')
                 ->label('Faskes')
                 ->options(Faskes::pluck('nama', 'id')->toArray())
@@ -61,22 +58,17 @@ class SuratRekonResource extends Resource
 
                     // Mengambil barang transaksi dari faskes dalam rentang tanggal yang ditentukan
                     return BarangTransaksi::where('faskes_id', $faskesId)
-                        ->whereBetween('tanggal_transaksi', [$startDate, $endDate]) // Filter berdasarkan rentang tanggal
-                        ->with(['items.barangMaster']) // Memastikan relasi barang master dimuat
+                        ->whereBetween('tanggal_transaksi', [$startDate, $endDate])
+                        ->with(['items.barangMaster'])
                         ->get()
-                        ->pluck('detail', 'id');
+                        ->mapWithKeys(function ($transaksi) {
+                            $tanggalTransaksi = $transaksi->tanggal_transaksi instanceof \DateTime ? $transaksi->tanggal_transaksi->format('d-m-Y') : $transaksi->tanggal_transaksi;
+                            return [$transaksi->id => "{$transaksi->detail} (Tanggal Transaksi: {$tanggalTransaksi})"];
+                        });
                 })
                 ->multiple()
                 ->required()
                 ->reactive(),
-            // TextInput::make('barangTransaksis.items.barangMaster.total_harga')
-            //     ->disabled()
-            //     ->label('Total Harga')
-            //     ->reactive()
-            //     ->afterStateHydrated(function (TextInput $component, $state) {
-            //         $component->state(number_format($state, 2, ',', '.'));
-            //     })
-            //     ->dehydrateStateUsing(fn ($state) => str_replace([',', '.'], ['', '.'], $state)),
         ]);
     }
 
@@ -85,19 +77,17 @@ class SuratRekonResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nomor')->label('Nomor Surat'),
-                Tables\Columns\TextColumn::make('spmb_nomor')->label('SPMB'),
                 Tables\Columns\TextColumn::make('tanggal')->label('Tanggal Surat')->date(),
                 Tables\Columns\TextColumn::make('faskes.nama')->label('Faskes'),
                 Tables\Columns\TextColumn::make('start_date')->label('Tanggal Awal')->date(),
                 Tables\Columns\TextColumn::make('end_date')->label('Tanggal Akhir')->date(),
-                // Tables\Columns\TextColumn::make('total_harga')->label('Total Harga'),
             ])
             ->filters([/* Add any necessary filters here */])
             ->actions([
                 Action::make('printREKON')
                     ->label('Print Rekon')
                     ->icon('heroicon-o-printer')
-                    ->url(fn (SuratRekon $record) => route('print.surat-rekon', $record->id)) // Ganti dengan route yang sesuai
+                    ->url(fn (SuratRekon $record) => route('print.surat-rekon', $record->id))
                     ->openUrlInNewTab(),
             ])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);

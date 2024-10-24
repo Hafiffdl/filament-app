@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\SuratBast;
 use App\Models\SuratKeluar;
 use App\Models\SuratRekon;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class ReportController extends Controller
 
     public function printSuratSerahTerima($id)
     {
-        $suratSerahTerima = SuratKeluar::with(['faskes', 'barangTransaksis.items.barangMaster'])->findOrFail($id);
+        $suratSerahTerima = SuratBast::with(['faskes', 'barangTransaksis.items.barangMaster'])->findOrFail($id);
         $filename = 'surat-serah-terima-' . str_replace('/', '-', $suratSerahTerima->nomor) . '.pdf';
         $pdf = PDF::loadView('reports.surat-serah-terima', compact('suratSerahTerima'));
         return $pdf->stream($filename);
@@ -27,7 +28,7 @@ class ReportController extends Controller
     public function printSuratRekon($id)
     {
         $suratRekon = SuratRekon::with(['faskes', 'barangTransaksis.items.barangMaster'])->findOrFail($id);
-        $filename = 'surat-rekon' . str_replace('/', '-', $suratRekon->nomor) . '.pdf';
+        $filename = 'surat-rekon-' . str_replace('/', '-', $suratRekon->nomor) . '.pdf';
         $pdf = PDF::loadView('reports.surat-rekon', compact('suratRekon'));
         return $pdf->stream('surat-rekon' . $suratRekon->nomor . '.pdf');
     }

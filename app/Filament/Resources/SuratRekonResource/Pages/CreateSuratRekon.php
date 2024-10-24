@@ -11,6 +11,7 @@ class CreateSuratRekon extends CreateRecord
     protected static string $resource = SuratRekonResource::class;
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+
         $barangTransaksiIds = $data['barang_transaksi_ids'];
         unset($data['barang_transaksi_ids']);
 
