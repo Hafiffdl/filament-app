@@ -101,27 +101,39 @@ class SuratBastResource extends Resource
             TextColumn::make('barangTransaksis.items.barangMaster.nama_barang')
                 ->label('Nama Barang')
                 ->getStateUsing(function ($record) {
-                    return $record->barangTransaksis->flatMap(function ($transaksi) {
+                    $items = $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
                             return $item->barangMaster->nama_barang;
                         });
-                    })->unique()->implode("<br>");
+                    })->unique()->values();
+
+                    $formattedList = $items->map(function ($item, $index) {
+                        return ($index + 1) . '. ' . $item;
+                    })->implode('<br>');
+
+                    return $formattedList;
                 })
                 ->extraAttributes(['style' => 'white-space: pre-line;'])
-                ->wrap()
-                ->html(),
+                ->html()
+                ->alignLeft(),
             TextColumn::make('barangTransaksis.items.barangMaster.nomor_batch')
                 ->label('Nomor Batch')
                 ->getStateUsing(function ($record) {
-                    return $record->barangTransaksis->flatMap(function ($transaksi) {
+                    $items = $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
                             return $item->barangMaster->nomor_batch;
                         });
-                    })->unique()->implode("<br>");
+                    })->unique()->values();
+
+                    $formattedList = $items->map(function ($item, $index) {
+                        return ($index + 1) . '. ' . $item;
+                    })->implode('<br>');
+
+                    return $formattedList;
                 })
                 ->extraAttributes(['style' => 'white-space: pre-line;'])
-                ->wrap()
-                ->html(),
+                ->html()
+                ->alignLeft(),
             TextColumn::make('barangTransaksis.items.jumlah')
                 ->label('Jumlah')
                 ->getStateUsing(function ($record) {
