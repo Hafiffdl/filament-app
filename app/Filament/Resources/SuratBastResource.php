@@ -25,6 +25,11 @@ class SuratBastResource extends Resource
 
     protected static ?string $modelLabel = 'Surat BAST';
 
+    public static function getNavigationSort(): ?int
+    {
+        return 2;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([

@@ -42,20 +42,20 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
             ])
-            ->navigationGroups([
-                NavigationGroup::make('Laporan')
-                    ->items([
-                        NavigationItem::make('Surat Keluar')
-                            ->icon('heroicon-o-document')
-                            ->url('/admin/reports/surat-keluar'),
-                        NavigationItem::make('Surat Serah Terima')
-                            ->icon('heroicon-o-document-duplicate')
-                            ->url('/admin/reports/surat-serah-terima'),
-                        NavigationItem::make('Surat Serah Terima RSUD')
-                            ->icon('heroicon-o-document-check')
-                            ->url('/admin/reports/surat-serah-terima-rsud'),
-                    ]),
-            ])
+            // ->navigationGroups([
+            //     NavigationGroup::make('Laporan')
+            //         ->items([
+            //             NavigationItem::make('Surat Keluar')
+            //                 ->icon('heroicon-o-document')
+            //                 ->url('/admin/reports/surat-keluar'),
+            //             NavigationItem::make('Surat Serah Terima')
+            //                 ->icon('heroicon-o-document-duplicate')
+            //                 ->url('/admin/reports/surat-serah-terima'),
+            //             NavigationItem::make('Surat Serah Terima RSUD')
+            //                 ->icon('heroicon-o-document-check')
+            //                 ->url('/admin/reports/surat-serah-terima-rsud'),
+            //         ]),
+            // ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

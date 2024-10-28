@@ -178,7 +178,7 @@
 
     <p>dalam hal ini bertindak dan atas nama Jabatan tersebut di atas yang selanjutnya dalam Berita Acara ini disebut <strong>PIHAK KEDUA</strong></p>
 
-    <p>Dengan mengingat telah melaksanakan penyerahan dan penerimaan barang persediaan alat/obat kontrasepsi dan non kontrasepsi pada bulan <span style="font-weight: bold;">{{ \Carbon\Carbon::parse($suratRekon->start_date)->locale('id')->translatedFormat('F') }} s/d {{ \Carbon\Carbon::parse($suratRekon->end_date)->locale('id')->translatedFormat('F') }}</span> dengan rincian sebagai berikut:</p>
+    <p>Dengan mengingat telah melaksanakan penyerahan dan penerimaan barang persediaan alat/obat kontrasepsi dan non kontrasepsi *) <span style="font-weight: bold;">{{ \Carbon\Carbon::parse($suratRekon->start_date)->locale('id')->translatedFormat('F') }} s/d {{ \Carbon\Carbon::parse($suratRekon->end_date)->locale('id')->translatedFormat('F') }}</span> dengan rincian sebagai berikut:</p>
 
     <table>
         <tr>

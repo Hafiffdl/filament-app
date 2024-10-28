@@ -179,7 +179,7 @@
 
     <p>dalam hal ini bertindak dan atas nama Jabatan tersebut di atas yang selanjutnya dalam Berita Acara ini disebut <strong>PIHAK KEDUA</strong></p>
 
-    <p>Dengan mengingat telah melaksanakan penyerahan dan penerimaan barang persediaan alat/obat kontrasepsi dan non kontrasepsi pada bulan dengan rincian sebagai berikut:</p>
+    <p>Dengan mengingat telah melaksanakan penyerahan dan penerimaan barang persediaan alat/obat kontrasepsi dan non kontrasepsi pada bulan *) dengan rincian sebagai berikut:</p>
 
     <table>
         <tr>

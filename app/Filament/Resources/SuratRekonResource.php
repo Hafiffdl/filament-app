@@ -25,6 +25,11 @@ class SuratRekonResource extends Resource
     protected static ?string $pluralModelLabel = 'Surat Rekon';
     protected static ?string $modelLabel = 'Surat Rekon';
 
+    public static function getNavigationSort(): ?int
+    {
+        return 3;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
