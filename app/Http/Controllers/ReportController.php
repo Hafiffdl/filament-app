@@ -28,8 +28,10 @@ class ReportController extends Controller
     public function printSuratRekon($id)
     {
         $suratRekon = SuratRekon::with(['faskes', 'barangTransaksis.items.barangMaster'])->findOrFail($id);
-        $filename = 'surat-rekon-' . str_replace('/', '-', $suratRekon->nomor) . '.pdf';
+        // Mengganti karakter '/' menjadi '-' atau karakter aman lainnya
+        $nomor = str_replace(['/', '\\'], '-', $suratRekon->nomor); 
+        $filename = 'surat-rekon-' . $nomor . '.pdf';
         $pdf = PDF::loadView('reports.surat-rekon', compact('suratRekon'));
-        return $pdf->stream('surat-rekon' . $suratRekon->nomor . '.pdf');
+        return $pdf->stream($filename);
     }
 }

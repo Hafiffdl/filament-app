@@ -66,6 +66,8 @@ class FaskesResource extends Resource
             Tables\Columns\TextColumn::make('nama_pengurus_barang')->label('Nama Pengurus Barang'),
             Tables\Columns\TextColumn::make('nip_pengurus_barang')->label('NIP Pengurus Barang'),
         ])
+        ->filters([])
+        ->bulkActions([Tables\Actions\DeleteBulkAction::make()])
         ->actions([
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),
