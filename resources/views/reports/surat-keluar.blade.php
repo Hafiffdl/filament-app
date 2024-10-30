@@ -124,15 +124,21 @@
         .label {
             display: inline-block;
             width: 100px; /* Sesuaikan lebar label */
+            vertical-align: top;
 
         }
 
         .separator {
             padding-right: 2px; /* Jarak antara titik dua dan value */
+            vertical-align: top;
         }
 
         .value {
             display: inline-block;
+            width: calc(100% - 120px); /* Adjust width calculation */
+            word-wrap: break-word; /* Allow text to wrap */
+            white-space: normal; /* Allow text to wrap to multiple lines */
+            vertical-align: top;
         }
         .recipient-info {
             border: 1px solid black;
