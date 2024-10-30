@@ -45,6 +45,9 @@ class SuratKeluarResource extends Resource
             ->required()
             ->label('SPMB')
             ->rule('regex:/^[a-zA-Z0-9\/\.\-\:\s]+$/'),
+        DatePicker::make('spmb_tanggal')
+            ->required()
+            ->label('Tanggal SPMB'),
             DatePicker::make('tanggal_transaksi')
                 ->required()
                 ->label('Tanggal Transaksi SBBK'),
@@ -110,7 +113,11 @@ class SuratKeluarResource extends Resource
                 ->label('SPMB')
                 ->sortable()
                 ->searchable()
-                ->getStateUsing(fn ($record) => $record->spmb_nomor),  // Tampilkan dengan format asli
+                ->getStateUsing(fn ($record) => $record->spmb_nomor),
+                TextColumn::make('spmb_tanggal')
+                ->label('Tanggal SPMB')
+                ->date()
+                ->sortable(),
             TextColumn::make('faskes.nama')
                 ->label('Faskes')
                 ->sortable()
