@@ -1,66 +1,243 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="" rel="noopener">
+ <img width=200px height=200px src="https://laravel.com/img/logomark.min.svg" alt="Laravel logo"></a>
 </p>
 
-## About Laravel
+<h3 align="center">Laravel Admin Panel Project</h3>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<div align="center">
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+</div>
+---
 
-## Learning Laravel
+<p align="center"> 
+    Modern admin panel built with Laravel 11 and Filament, providing powerful content management capabilities with minimal dependencies.
+    <br> 
+</p>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📝 Table of Contents
+- [About](#about)
+- [System Requirements](#system_requirements)
+- [Getting Started](#getting_started)
+- [Development Setup](#development_setup)
+- [Database Setup](#database_setup)
+- [Running Tests](#tests)
+- [Deployment](#deployment)
+- [Built Using](#built_using)
+- [Authors](#authors)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🧐 About <a name = "about"></a>
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Modern web application built using Laravel 11 framework with Filament admin panel. This project provides a robust starting point for building content management systems with features like user management, role-based access control, and content publishing workflow, all without JavaScript build requirements.
 
-## Laravel Sponsors
+## 💻 System Requirements <a name = "system_requirements"></a>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP >= 8.2
+- Composer
+- MySQL >= 8.0
+- Laragon (Latest version)
+- Browser = Google Chrome, Microsoft Edge
+- Git
 
-### Premium Partners
+## 🏁 Getting Started <a name = "getting_started"></a>
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Installing Laragon
 
-## Contributing
+1. Download Laragon Full version from [https://laragon.org/download/](https://laragon.org/download/)
+2. Install Laragon by running the installer
+3. During installation:
+   - Choose your preferred installation directory
+   - Select "Run Laragon when Windows starts" if desired
+   - Complete the installation
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🔧 Development Setup <a name = "development_setup"></a>
 
-## Code of Conduct
+### Clone & Install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# Navigate to Laragon www directory
+cd C:/laragon/www
 
-## Security Vulnerabilities
+# Clone the repository
+git clone https://github.com/Hafiffdl/filament-app.git
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Navigate to project directory
+cd filament-app
 
-## License
+# Install PHP dependencies
+composer install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+```
+
+### Environment Configuration
+
+Edit `.env` file and update these settings:
+
+```env
+APP_NAME="Your App Name"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://project-name.test
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+## 📦 Database Setup <a name = "database_setup"></a>
+
+```bash
+# Create database tables
+php artisan migrate
+```
+
+### Install Filament
+
+```bash
+# Install Filament
+composer require filament/filament:"^3.2"
+
+# Publish Filament configuration
+php artisan filament:install --panels
+
+# Create admin user
+php artisan make:filament-user
+```
+
+### Additional Setup
+
+```bash
+# Optimize autoloader
+composer dump-autoload -o
+
+# Clear all caches
+php artisan optimize:clear
+
+# Cache configuration
+php artisan config:cache
+
+# Cache routes
+php artisan route:cache
+```
+
+## 🎈 Development Workflow <a name="workflow"></a>
+
+1. Start Laragon services:
+   - Open Laragon
+   - Click "Start All"
+
+2. Access the application:
+   - Frontend: http://project-name.test
+   - Admin Panel: http://project-name.test/admin
+   
+3. Default admin credentials:
+   - Email: admin@example.com
+   - Password: password
+
+## Folder Structure
+
+```
+├── app/
+│   ├── Filament/         # Filament resource files
+│   ├── Http/             # Controllers, Middleware
+│   ├── Models/           # Eloquent models
+│   └── Providers/        # Service providers
+├── config/              # Configuration files
+├── database/
+│   ├── migrations/      # Database migrations
+│   └── seeders/        # Database seeders
+├── public/             # Publicly accessible files
+├── resources/
+│   └── views/          # Blade templates
+├── routes/             # Route definitions
+└── storage/           # Application storage
+```
+
+## 🔧 Running Tests <a name = "tests"></a>
+
+```bash
+# Run all tests
+php artisan test
+
+# Run specific test suite
+php artisan test --testsuite=Feature
+```
+
+## 🚀 Deployment <a name = "deployment"></a>
+
+For production deployment:
+
+```bash
+# Install dependencies
+composer install --optimize-autoloader --no-dev
+
+# Optimize configuration loading
+php artisan config:cache
+
+# Optimize route loading
+php artisan route:cache
+
+# Optimize view loading
+php artisan view:cache
+```
+
+## Maintenance Commands
+
+```bash
+# Clear application cache
+php artisan cache:clear
+
+# Clear config cache
+php artisan config:clear
+
+# Clear route cache
+php artisan route:clear
+
+# Clear view cache
+php artisan view:clear
+
+# Reset all caches
+php artisan optimize:clear
+```
+
+## ⛏️ Built Using <a name = "built_using"></a>
+
+- [Laravel 11](https://laravel.com) - PHP Framework
+- [Filament 3](https://filamentphp.com) - Admin Panel
+- [MySQL](https://www.mysql.com) - Database
+- [Laragon](https://laragon.org) - Development Environment
+
+## ✍️ Authors <a name = "authors"></a>
+
+- [Tim Sudin PPAPP Jakarta Timur]
+
+## Troubleshooting
+
+1. Jika muncul error saat akses website:
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+```
+
+2. Jika ada masalah permission storage:
+```bash
+chmod -R 775 storage
+chmod -R 775 bootstrap/cache
+```
+
+3. Jika database migration error:
+```bash
+php artisan migrate:fresh
+```
