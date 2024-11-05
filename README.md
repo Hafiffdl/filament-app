@@ -3,7 +3,7 @@
  <img width=200px height=200px src="https://laravel.com/img/logomark.min.svg" alt="Laravel logo"></a>
 </p>
 
-<h3 align="center">Laravel Admin Panel Project</h3>
+<h3 align="center">System Alokon</h3>
 
 <div align="center">
 
@@ -11,7 +11,6 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
----
 
 <p align="center"> 
     Modern admin panel built with Laravel 11 and Filament, providing powerful content management capabilities with minimal dependencies.
@@ -138,11 +137,10 @@ php artisan route:cache
    - Click "Start All"
 
 2. Access the application:
-   - Frontend: http://project-name.test
-   - Admin Panel: http://project-name.test/admin
+   - Admin Panel: http://filament-app.test/admin
    
 3. Default admin credentials:
-   - Email: admin@example.com
+   - Email: admin@gmail.com
    - Password: password
 
 ## Folder Structure
