@@ -30,7 +30,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
-Modern web application built using Laravel 11 framework with Filament admin panel. This project provides a robust starting point for building content management systems with features like user management, role-based access control, and content publishing workflow, all without JavaScript build requirements.
+Modern web application built using Laravel 11 framework with Filament admin panel. This project provides a robust starting point for building content management systems with features like user management, role-based access control, and content publishing workflow
 
 ## 💻 System Requirements <a name = "system_requirements"></a>
 
