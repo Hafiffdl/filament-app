@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Cyan,
             ])
-            ->favicon(asset('images/faviconsudin.png'))
+            ->favicon(asset('images/Logojayaraya.png'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
