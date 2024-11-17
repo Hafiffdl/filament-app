@@ -104,17 +104,17 @@ class SuratKeluarResource extends Resource
                 ->label('Nomor Surat SBBK')
                 ->sortable()
                 ->searchable()
-                ->getStateUsing(fn ($record) => $record->nomor),  // Tampilkan dengan format asli
-                TextColumn::make('tanggal_transaksi')
+                ->getStateUsing(fn ($record) => $record->nomor),
+            TextColumn::make('tanggal_transaksi')
                 ->label('Tanggal Transaksi SBBK')
                 ->date()
                 ->sortable(),
-                TextColumn::make('spmb_nomor')
+            TextColumn::make('spmb_nomor')
                 ->label('SPMB')
                 ->sortable()
                 ->searchable()
                 ->getStateUsing(fn ($record) => $record->spmb_nomor),
-                TextColumn::make('spmb_tanggal')
+            TextColumn::make('spmb_tanggal')
                 ->label('Tanggal SPMB')
                 ->date()
                 ->sortable(),
@@ -132,15 +132,14 @@ class SuratKeluarResource extends Resource
                     })->unique()->values();
 
                     $formattedList = $items->map(function ($item, $index) {
-                        return ($index + 1) . '. ' . $item;
+                        return str_pad(($index + 1) . '.', 3, ' ') . ' ' . $item;
                     })->implode('<br>');
 
                     return $formattedList;
                 })
-                ->extraAttributes(['style' => 'white-space: pre-line;'])
                 ->html()
                 ->alignLeft(),
-            TextColumn::make('barangTransaksis.items.barangMaster.nomor_batch')
+                TextColumn::make('barangTransaksis.items.barangMaster.nomor_batch')
                 ->label('Nomor Batch')
                 ->getStateUsing(function ($record) {
                     $items = $record->barangTransaksis->flatMap(function ($transaksi) {
@@ -155,7 +154,6 @@ class SuratKeluarResource extends Resource
 
                     return $formattedList;
                 })
-                ->extraAttributes(['style' => 'white-space: pre-line;'])
                 ->html()
                 ->alignLeft(),
             TextColumn::make('barangTransaksis.items.jumlah')
@@ -163,22 +161,23 @@ class SuratKeluarResource extends Resource
                 ->getStateUsing(function ($record) {
                     return $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
-                            return $item->jumlah;
+                            return "<div class='px-2 py-1'>{$item->jumlah}</div>";
                         });
-                    })->sum();
-                }),
+                    })->implode('');
+                })
+                ->html(),
             TextColumn::make('barangTransaksis.items.barangMaster.harga_satuan')
                 ->label('Harga Satuan')
                 ->getStateUsing(function ($record) {
                     return $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
-                            return 'Rp. ' . number_format($item->barangMaster->harga_satuan, 2, ',', '.');
+                            $formattedPrice = 'Rp. ' . number_format($item->barangMaster->harga_satuan, 2, ',', '.');
+                            return "<div class='px-2 py-1'>{$formattedPrice}</div>";
                         });
-                    })->unique()->implode("<br>");
+                    })->unique()->implode('');
                 })
-                ->extraAttributes(['style' => 'white-space: pre-line;'])
-                ->wrap()
-                ->html(),
+                ->html()
+                ->alignRight(),
             TextColumn::make('total_harga')
                 ->label('Total Harga')
                 ->getStateUsing(function ($record) {
@@ -187,9 +186,9 @@ class SuratKeluarResource extends Resource
                             return $item->jumlah * $item->barangMaster->harga_satuan;
                         });
                     });
-
                     return 'Rp. ' . number_format($totalHarga, 2, ',', '.');
-                }),
+                })
+                ->alignRight(),
         ])
         ->actions([
             Action::make('printSBBK')
@@ -209,6 +208,7 @@ class SuratKeluarResource extends Resource
             'edit' => Pages\EditSuratKeluar::route('/{record}/edit'),
         ];
     }
+
     public static function getNavigationGroup(): ?string
     {
         return 'Laporan';

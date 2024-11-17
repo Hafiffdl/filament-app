@@ -147,79 +147,47 @@ class BarangTransaksiResource extends Resource
                     ->date()
                     ->sortable(),
 
-                TextColumn::make('items.barangMaster.nama_barang')
+                    TextColumn::make('items.barangMaster.nama_barang')
                     ->label('Nama Barang')
                     ->getStateUsing(function ($record) {
-                        $index = 1;
-                        $items = $record->items->map(function ($item) use (&$index) {
-                            return $index++ . '. ' . ($item->barangMaster->nama_barang ?? 'N/A');
-                        });
-                        return $items->implode("\n");
+                        return $record->items->map(function ($item, $index) {
+                            return ($index + 1) . '. ' . ($item->barangMaster->nama_barang ?? 'N/A');
+                        })->implode('<br>');
                     })
-                    ->extraAttributes(['style' => 'white-space: pre-line;'])
-                    ->tooltip(function ($record) {
-                        $index = 1;
-                        return $record->items->map(function ($item) use (&$index) {
-                            return $index++ . '. ' . ($item->barangMaster->nama_barang ?? 'N/A');
-                        })->implode(', ');
-                    }),
+                    ->html(),
 
                 TextColumn::make('items.barangMaster.nomor_batch')
                     ->label('Nomor Batch')
                     ->getStateUsing(function ($record) {
-                        $index = 1;
-                        $items = $record->items->map(function ($item) use (&$index) {
-                            return $index++ . '. ' . ($item->barangMaster->nomor_batch ?? 'N/A');
-                        });
-                        return $items->implode("\n");
+                        return $record->items->map(function ($item, $index) {
+                            return ($index + 1) . '. ' . ($item->barangMaster->nomor_batch ?? 'N/A');
+                        })->implode('<br>');
                     })
-                    ->extraAttributes(['style' => 'white-space: pre-line;'])
-                    ->tooltip(function ($record) {
-                        $index = 1;
-                        return $record->items->map(function ($item) use (&$index) {
-                            return $index++ . '. ' . ($item->barangMaster->nomor_batch ?? 'N/A');
-                        })->implode(', ');
-                    }),
+                    ->html(),
 
                 TextColumn::make('items.barangMaster.kadaluarsa')
                     ->label('Kadaluarsa')
                     ->getStateUsing(function ($record) {
-                        return $record->items->map(function ($item) {
+                        return $record->items->map(function ($item, $index) {
                             $kadaluarsaDate = $item->barangMaster->kadaluarsa;
                             if ($kadaluarsaDate instanceof \DateTime) {
-                                return $kadaluarsaDate->format('d-m-Y');
+                                return ($index + 1) . '. ' . $kadaluarsaDate->format('d-m-Y');
                             } elseif (is_string($kadaluarsaDate)) {
-                                return $kadaluarsaDate;
+                                return ($index + 1) . '. ' . $kadaluarsaDate;
                             }
-                            return 'N/A';
-                        })->implode("\n");
+                            return ($index + 1) . '. N/A';
+                        })->implode('<br>');
                     })
-                    ->extraAttributes(['style' => 'white-space: pre-line;'])
-                    ->tooltip(function ($record) {
-                        return $record->items->map(function ($item) {
-                            $kadaluarsaDate = $item->barangMaster->kadaluarsa;
-                            if ($kadaluarsaDate instanceof \DateTime) {
-                                return $kadaluarsaDate->format('d-m-Y');
-                            } elseif (is_string($kadaluarsaDate)) {
-                                return $kadaluarsaDate;
-                            }
-                            return 'N/A';
-                        })->implode(', ');
-                    }),
+                    ->html(),
 
                 TextColumn::make('items.barangMaster.satuan')
                     ->label('Satuan')
                     ->getStateUsing(function ($record) {
-                        return $record->items->map(function ($item) {
-                            return $item->barangMaster->satuan ?? 'N/A';
-                        })->implode("\n");
+                        return $record->items->map(function ($item, $index) {
+                            return ($index + 1) . '. ' . ($item->barangMaster->satuan ?? 'N/A');
+                        })->implode('<br>');
                     })
-                    ->extraAttributes(['style' => 'white-space: pre-line;'])
-                    ->tooltip(function ($record) {
-                        return $record->items->map(function ($item) {
-                            return $item->barangMaster->satuan ?? 'N/A';
-                        })->implode(', ');
-                    }),
+                    ->html(),
 
                 TextColumn::make('total_harga')
                     ->label('Total Harga')

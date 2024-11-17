@@ -87,6 +87,7 @@ class SuratBastResource extends Resource
                 ->searchable(),
             TextColumn::make('barangTransaksis.tanggal_transaksi')
                 ->label('Tanggal Transaksi')
+                ->date()
                 ->getStateUsing(function ($record) {
                     return $record->barangTransaksis->map(function ($transaksi) {
                         $transactionDate = $transaksi->tanggal_transaksi;
@@ -100,7 +101,6 @@ class SuratBastResource extends Resource
                         return 'N/A';
                     })->implode("<br>");
                 })
-                ->extraAttributes(['style' => 'white-space: pre-line;'])
                 ->sortable()
                 ->html(),
             TextColumn::make('barangTransaksis.items.barangMaster.nama_barang')
@@ -118,7 +118,6 @@ class SuratBastResource extends Resource
 
                     return $formattedList;
                 })
-                ->extraAttributes(['style' => 'white-space: pre-line;'])
                 ->html()
                 ->alignLeft(),
             TextColumn::make('barangTransaksis.items.barangMaster.nomor_batch')
@@ -136,7 +135,6 @@ class SuratBastResource extends Resource
 
                     return $formattedList;
                 })
-                ->extraAttributes(['style' => 'white-space: pre-line;'])
                 ->html()
                 ->alignLeft(),
             TextColumn::make('barangTransaksis.items.jumlah')
@@ -153,13 +151,13 @@ class SuratBastResource extends Resource
                 ->getStateUsing(function ($record) {
                     return $record->barangTransaksis->flatMap(function ($transaksi) {
                         return $transaksi->items->map(function ($item) {
-                            return 'Rp. ' . number_format($item->barangMaster->harga_satuan, 2, ',', '.');
+                            $formattedPrice = 'Rp. ' . number_format($item->barangMaster->harga_satuan, 2, ',', '.');
+                            return "<div class='px-2 py-1'>{$formattedPrice}</div>";
                         });
-                    })->unique()->implode("<br>");
+                    })->unique()->implode('');
                 })
-                ->extraAttributes(['style' => 'white-space: pre-line;'])
-                ->wrap()
-                ->html(),
+                ->html()
+                ->alignRight(),
             TextColumn::make('total_harga')
                 ->label('Total Harga')
                 ->getStateUsing(function ($record) {
