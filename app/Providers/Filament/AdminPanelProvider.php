@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -42,20 +43,25 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
             ])
-            // ->navigationGroups([
-            //     NavigationGroup::make('Laporan')
-            //         ->items([
-            //             NavigationItem::make('Surat Keluar')
-            //                 ->icon('heroicon-o-document')
-            //                 ->url('/admin/reports/surat-keluar'),
-            //             NavigationItem::make('Surat Serah Terima')
-            //                 ->icon('heroicon-o-document-duplicate')
-            //                 ->url('/admin/reports/surat-serah-terima'),
-            //             NavigationItem::make('Surat Serah Terima RSUD')
-            //                 ->icon('heroicon-o-document-check')
-            //                 ->url('/admin/reports/surat-serah-terima-rsud'),
-            //         ]),
-            // ])
+            ->registration()
+            // ->passwordReset()
+            ->emailVerification()
+            ->profile()
+            ->loginRouteSlug('login')
+            ->registrationRouteSlug('register')
+            // ->passwordResetRoutePrefix('password-reset')
+            // ->passwordResetRequestRouteSlug('request')
+            // ->passwordResetRouteSlug('reset')
+            ->emailVerificationRoutePrefix('email-verification')
+            ->emailVerificationPromptRouteSlug('prompt')
+            ->emailVerificationRouteSlug('verify')
+            ->sidebarWidth('14rem')
+            ->sidebarCollapsibleOnDesktop()
+            ->collapsedSidebarWidth('2rem')
+            ->maxContentWidth('full')
+            ->profile(isSimple: false)
+            ->defaultThemeMode(ThemeMode::Light)
+            ->brandName('Sudin')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
