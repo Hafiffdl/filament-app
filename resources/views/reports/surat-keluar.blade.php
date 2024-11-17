@@ -145,6 +145,16 @@
             padding: 5px;
             margin-bottom: 15px;
         }
+        /* table tr th:nth-child(5),
+        table tr td:nth-child(5) {
+            width: 50px;
+            max-width: 50px;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            /* font-size: 12px; */
+            /* padding: 4px; */
+        /* } */
     </style>
 </head>
 <body>
@@ -260,13 +270,13 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->jumlah }}</td>
-                    <td>{{ $item->barangMaster->satuan }}</td>
+                    <td style="text-align: center;">{{ $item->jumlah }}</td>
+                    <td style="text-align: center;">{{ $item->barangMaster->satuan }}</td>
                     <td>{{ $item->barangMaster->nomor_batch }}</td>
-                    <td>{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->format('Y-m-d') : 'N/A' }}</td>
-                    <td>Rp{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
-                    <td>Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
-                    <td>{{ $item->barangMaster->sumber_dana }}</td>
+                    <td style="text-align: center;">{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->format('Y-m-d') : 'N/A' }}</td>
+                    <td style="text-align: right;">Rp{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
+                    <td style="text-align: right;">Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
+                    <td style="text-align: center;">{{ $item->barangMaster->sumber_dana }}</td>
                     <td>{{ $item->titik_permintaan_darurat }}</td>
                     <td>{{ $item->titik_stok_realokasi }}</td>
                 </tr>
