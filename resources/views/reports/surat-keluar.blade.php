@@ -248,14 +248,14 @@
     <table>
         <tr>
             <th rowspan="2">NO</th>
-            <th rowspan="2">NAMA BARANG</th>
+            <th style="border: 1px solid black;" rowspan="2">NAMA<br>BARANG</th>
             <th rowspan="2">JUMLAH</th>
             <th rowspan="2">SATUAN</th>
             <th colspan="2" style="text-align: center;">SPESIFIKASI</th>
             <th colspan="2" style="text-align: center;">HARGA</th>
             <th rowspan="2">SUMBER DANA</th>
-            <th rowspan="2">TITIK PERMINTAAN DARURAT</th>
-            <th rowspan="2">TITIK STOK REALOKASI TERKINI</th>
+            <th rowspan="2">TITIK PERMI<br>NTAAN DARU<br>RAT</th>
+            <th rowspan="2">TITIK<br>STOK<br>REALO<br>KASI<br>TERKINI</th>
         </tr>
         <tr>
             <th>NOMOR BATCH</th>
@@ -267,13 +267,13 @@
             @foreach($transaksi->items as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->barangMaster->nama_barang }}</td>
+                    <td class="nama-barang" style="text-align: left">{{ $item->barangMaster->nama_barang }}</td>
                     <td>{{ $item->jumlah }}</td>
                     <td>{{ $item->barangMaster->satuan }}</td>
                     <td class="nomor-batch">{{ $item->barangMaster->nomor_batch }}</td>
                     <td>{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->format('Y-m-d') : 'N/A' }}</td>
-                    <td>Rp{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
-                    <td>Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
+                    <td>Rp.{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
+                    <td>Rp.{{ number_format($item->total_harga, 2, ',', '.') }}</td>
                     <td>{{ $item->barangMaster->sumber_dana }}</td>
                     <td>{{ $item->titik_permintaan_darurat }}</td>
                     <td>{{ $item->titik_stok_realokasi }}</td>
@@ -282,7 +282,7 @@
         @endforeach
         <tr>
             <td colspan="7" class="right-align" style="font-weight: bold;">TOTAL NILAI BARANG</td>
-            <td class="right-align">Rp{{ number_format($suratKeluar->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
+            <td class="right-align">Rp.{{ number_format($suratKeluar->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
             <td colspan="3"></td>
         </tr>
     </table>
