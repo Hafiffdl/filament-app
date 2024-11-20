@@ -106,6 +106,14 @@
         .value {
             display: inline-block;
         }
+        td.nama-barang{
+            word-wrap: break-word;       /* Memecah teks panjang menjadi beberapa baris */
+            word-break: break-word;     /* Memastikan kata panjang terpecah */
+            white-space: normal;        /* Membungkus teks secara normal */
+            max-width: 130px;           /* Batasi lebar maksimum kolom */
+            overflow: hidden;           /* Sembunyikan bagian teks yang melebihi */
+            text-overflow: ellipsis;    /* Tambahkan "..." jika teks terpotong */
+        }
     </style>
 </head>
 <body>
@@ -216,10 +224,10 @@
             @endphp
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $group->first()['nama_barang'] }}</td>
-                <td>{{ $totalJumlah }}</td>
-                <td>{{ $group->first()['satuan'] }}</td>
-                <td>Rp {{ number_format($hargaSatuan, 2, ',', '.') }}</td>
+                <td class="nama-barang">{{ $group->first()['nama_barang'] }}</td>
+                <td style="text-align: center;">{{ $totalJumlah }}</td>
+                <td style="text-align: center;">{{ $group->first()['satuan'] }}</td>
+                <td style="text-align: right;">Rp {{ number_format($hargaSatuan, 2, ',', '.') }}</td>
                 <td>Rp {{ number_format($jumlahHarga, 2, ',', '.') }}</td>
             </tr>
         @endforeach

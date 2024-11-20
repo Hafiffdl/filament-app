@@ -153,6 +153,14 @@
         overflow: hidden;           /* Sembunyikan bagian teks yang melebihi */
         text-overflow: ellipsis;    /* Tambahkan "..." jika teks terpotong */
     }
+    td.nama-barang {
+        word-wrap: break-word;       /* Memecah teks panjang menjadi beberapa baris */
+        word-break: break-word;     /* Memastikan kata panjang terpecah */
+        white-space: normal;        /* Membungkus teks secara normal */
+        max-width: 150px;           /* Batasi lebar maksimum kolom */
+        overflow: hidden;           /* Sembunyikan bagian teks yang melebihi */
+        text-overflow: ellipsis;    /* Tambahkan "..." jika teks terpotong */
+    }
     </style>
 </head>
 <body>
@@ -261,20 +269,20 @@
             <th>NOMOR BATCH</th>
             <th>BATAS KADALUWARSA</th>
             <th>HARGA SATUAN</th>
-            <th>TOTAL NILAI BARANG</th>
+            <th>TOTAL<br>NILAI<br>BARANG</th>
         </tr>
         @foreach($suratKeluar->barangTransaksis as $transaksi)
             @foreach($transaksi->items as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td class="nama-barang" style="text-align: left">{{ $item->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->jumlah }}</td>
-                    <td>{{ $item->barangMaster->satuan }}</td>
-                    <td class="nomor-batch">{{ $item->barangMaster->nomor_batch }}</td>
-                    <td>{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->format('Y-m-d') : 'N/A' }}</td>
+                    <td style="text-align: center">{{ $item->jumlah }}</td>
+                    <td style="text-align: center">{{ $item->barangMaster->satuan }}</td>
+                    <td class="nomor-batch" style="text-align: center;">{{ $item->barangMaster->nomor_batch }}</td>
+                    <td style="text-align: center">{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->format('Y/m/d') : 'N/A' }}</td>
                     <td>Rp.{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
                     <td>Rp.{{ number_format($item->total_harga, 2, ',', '.') }}</td>
-                    <td>{{ $item->barangMaster->sumber_dana }}</td>
+                    <td style="text-align: center">{{ $item->barangMaster->sumber_dana }}</td>
                     <td>{{ $item->titik_permintaan_darurat }}</td>
                     <td>{{ $item->titik_stok_realokasi }}</td>
                 </tr>

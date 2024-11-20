@@ -106,6 +106,14 @@
         .value {
             display: inline-block;
         }
+        td.nama-barang{
+            word-wrap: break-word;       /* Memecah teks panjang menjadi beberapa baris */
+            word-break: break-word;     /* Memastikan kata panjang terpecah */
+            white-space: normal;        /* Membungkus teks secara normal */
+            max-width: 130px;           /* Batasi lebar maksimum kolom */
+            overflow: hidden;           /* Sembunyikan bagian teks yang melebihi */
+            text-overflow: ellipsis;    /* Tambahkan "..." jika teks terpotong */
+        }
     </style>
 </head>
 <body>
@@ -194,10 +202,10 @@
             @foreach($transaksi->items as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->barangMaster->nama_barang }}</td>
-                    <td>{{ $item->jumlah }}</td>
-                    <td>{{ $item->barangMaster->satuan }}</td>
-                    <td>Rp {{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
+                    <td class="nama-barang" style="text-align: left;">{{ $item->barangMaster->nama_barang }}</td>
+                    <td style="text-align: center;">{{ $item->jumlah }}</td>
+                    <td style="text-align: center;">{{ $item->barangMaster->satuan }}</td>
+                    <td style="text-align:right">Rp {{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
                     <td>Rp {{ number_format($item->total_harga, 2, ',', '.') }}</td>
                 </tr>
             @endforeach
@@ -205,7 +213,7 @@
         <tr class="subtotal-row">
             <td colspan="2" class="subtotal-label">SUB TOTAL</td>
             <td colspan="3"></td>
-            <td>Rp{{ number_format($suratSerahTerima->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
+            <td>Rp {{ number_format($suratSerahTerima->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
         </tr>
     </table>
 
