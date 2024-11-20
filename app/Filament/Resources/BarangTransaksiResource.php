@@ -144,6 +144,15 @@ class BarangTransaksiResource extends Resource
                     })
                     ->html(),
 
+                TextColumn::make('items.jumlah')
+                    ->label('Jumlah')
+                    ->getStateUsing(function ($record) {
+                        return $record->items->map(function ($item, $index) {
+                            return ($item->jumlah ?? 'N/A');
+                        })->implode('<br>');
+                    })
+                    ->html(),
+
                 TextColumn::make('items.barangMaster.satuan')
                     ->label('Satuan')
                     ->getStateUsing(function ($record) {
@@ -152,6 +161,15 @@ class BarangTransaksiResource extends Resource
                         })->implode('<br>');
                     })
                     ->html(),
+
+                TextColumn::make('items.barangMaster.harga_satuan')
+                ->label('Harga Satuan')
+                ->getStateUsing(function ($record) {
+                    return $record->items->map(function ($item, $index) {
+                        return 'Rp ' . number_format($item->harga_satuan, 2, ',', '.');
+                    })->implode('<br>');
+                })
+                ->html(),
 
                 TextColumn::make('total_harga')
                     ->label('Total Harga')
