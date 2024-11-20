@@ -42,6 +42,7 @@ class SuratRekonResource extends Resource
                 ->label('Tanggal Surat Rekon'),
             Select::make('faskes_id')
                 ->label('Faskes')
+                ->searchable()
                 ->options(Faskes::pluck('nama', 'id')->toArray())
                 ->required()
                 ->reactive()

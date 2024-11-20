@@ -45,6 +45,7 @@ class SuratBastResource extends Resource
                 ->label('Tanggal Transaksi'),
             Select::make('faskes_id')
                 ->label('Faskes')
+                ->searchable()
                 ->options(Faskes::pluck('nama', 'id'))
                 ->required()
                 ->reactive()

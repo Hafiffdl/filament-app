@@ -53,6 +53,7 @@ class SuratKeluarResource extends Resource
                 ->label('Tanggal Transaksi SBBK'),
             Select::make('faskes_id')
                 ->label('Faskes')
+                ->searchable()
                 ->options(Faskes::pluck('nama', 'id'))
                 ->required()
                 ->reactive()
