@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BarangTransaksiResource\Pages;
 use App\Models\BarangMaster;
 use App\Models\BarangTransaksi;
+use App\Models\Faskes;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,10 +16,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
-use Exception;
-use Filament\Notifications\Notification;
 
 class BarangTransaksiResource extends Resource
 {
@@ -36,6 +34,7 @@ class BarangTransaksiResource extends Resource
             ->schema([
                 Select::make('faskes_id')
                     ->relationship('faskes', 'nama')
+                    ->options(Faskes::pluck('nama', 'id'))
                     ->label('Faskes')
                     ->required()
                     ->searchable(),
@@ -57,7 +56,7 @@ class BarangTransaksiResource extends Resource
                                 $barangMaster = BarangMaster::find($state);
                                 if ($barangMaster) {
                                     $set('harga_satuan', $barangMaster->harga_satuan);
-                                    $set('stock', $barangMaster->stock);  // Set stok dari barang master
+                                    $set('stock', $barangMaster->stock);
                                 }
                             }),
 
@@ -69,9 +68,9 @@ class BarangTransaksiResource extends Resource
 
                         TextInput::make('harga_satuan')
                             ->label('Harga Satuan')
-                            ->disabled()
+                            ->required()
                             ->numeric()
-                            ->dehydrated(),
+                            ->reactive(),
 
                         TextInput::make('jumlah')
                             ->label('Jumlah')
@@ -80,17 +79,6 @@ class BarangTransaksiResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $hargaSatuan = $get('harga_satuan');
-                                $barangMaster = BarangMaster::find($get('barang_master_id'));
-
-                                // Cek stok barang saat jumlah diubah
-                                if ($barangMaster && $barangMaster->stock < $state) {
-                                    Notification::make()
-                                        ->title('Stok Barang Tidak Cukup')
-                                        ->danger()
-                                        ->body("Stok barang '{$barangMaster->nama_barang}' tidak cukup. Stok saat ini: {$barangMaster->stock}.")
-                                        ->send();
-                                }
-
                                 $set('total_harga', $hargaSatuan * $state);
                             }),
 
@@ -98,39 +86,13 @@ class BarangTransaksiResource extends Resource
                             ->label('Total Harga')
                             ->disabled()
                             ->numeric()
+                            ->dehydrated()
                             ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')),
                     ])
                     ->minItems(1)
                     ->defaultItems(1)
                     ->createItemButtonLabel('Tambah Barang'),
             ]);
-    }
-
-    public static function beforeCreate($data)
-    {
-        // Loop through all items in the transaction and check stock
-        DB::beginTransaction();  // Mulai transaksi database
-        try {
-            foreach ($data['items'] as $item) {
-                $barangMaster = BarangMaster::find($item['barang_master_id']);
-                if ($barangMaster && $barangMaster->stock <= 0) {
-                    // Tampilkan notifikasi error
-                    Notification::make()
-                        ->title('Error Stok')
-                        ->danger()
-                        ->body("Stok barang '{$barangMaster->nama_barang}' habis. Transaksi tidak dapat dilanjutkan.")
-                        ->send();
-
-                    throw new Exception("Stok barang '{$barangMaster->nama_barang}' habis.");
-                }
-            }
-            // Jika stok mencukupi, commit transaksi database
-            DB::commit();
-        } catch (Exception $e) {
-            // Jika ada error, rollback transaksi dan tampilkan error
-            DB::rollBack();
-            throw new Exception($e->getMessage());
-        }
     }
 
     public static function table(Table $table): Table
@@ -147,7 +109,7 @@ class BarangTransaksiResource extends Resource
                     ->date()
                     ->sortable(),
 
-                    TextColumn::make('items.barangMaster.nama_barang')
+                TextColumn::make('items.barangMaster.nama_barang')
                     ->label('Nama Barang')
                     ->getStateUsing(function ($record) {
                         return $record->items->map(function ($item, $index) {
@@ -168,6 +130,8 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('items.barangMaster.kadaluarsa')
                     ->label('Kadaluarsa')
                     ->getStateUsing(function ($record) {
+                        // Force refresh the relationship to get updated data
+                        $record->load('items.barangMaster');
                         return $record->items->map(function ($item, $index) {
                             $kadaluarsaDate = $item->barangMaster->kadaluarsa;
                             if ($kadaluarsaDate instanceof \DateTime) {
@@ -192,9 +156,11 @@ class BarangTransaksiResource extends Resource
                 TextColumn::make('total_harga')
                     ->label('Total Harga')
                     ->getStateUsing(function ($record) {
-                        return $record->items->sum('total_harga');
+                        // Force a fresh query to get the latest data
+                        $record->load('items');
+                        return 'Rp ' . number_format($record->items->sum('total_harga'), 2, ',', '.');
                     })
-                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 2, ',', '.'))
+                    ->alignEnd()
                     ->sortable(),
             ])
             ->filters([
