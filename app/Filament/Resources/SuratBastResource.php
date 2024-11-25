@@ -177,9 +177,9 @@ class SuratBastResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->url(fn (SuratBast $record) => route('print.surat-serah-terima', $record->id))
                     ->openUrlInNewTab(),
+                    Tables\Actions\EditAction::make(),
             ])
-            ->bulkActions([Tables\Actions\DeleteBulkAction::make()])
-            ->actions([Tables\Actions\EditAction::make()]);
+            ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 
     public static function getPages(): array

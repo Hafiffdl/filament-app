@@ -95,8 +95,8 @@ class SuratRekonResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->url(fn (SuratRekon $record) => route('print.surat-rekon', $record->id))
                     ->openUrlInNewTab(),
+                    Tables\Actions\EditAction::make(),
             ])
-            ->actions([Tables\Actions\EditAction::make()])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 

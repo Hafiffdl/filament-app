@@ -197,9 +197,10 @@ class SuratKeluarResource extends Resource
                 ->icon('heroicon-o-printer')
                 ->url(fn (SuratKeluar $record) => route('print.surat-keluar', $record->id))
                 ->openUrlInNewTab(),
+                Tables\Actions\EditAction::make(),
         ])
-        ->actions([Tables\Actions\EditAction::make()])
-        ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make()]);
     }
 
     public static function getPages(): array
