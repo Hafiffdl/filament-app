@@ -50,6 +50,11 @@ class BarangTransaksiResource extends Resource
                         Select::make('barang_master_id')
                             ->relationship('barangMaster', 'nama_barang')
                             ->label('Nama Barang')
+                            ->options(function () {
+                                return BarangMaster::all()->mapWithKeys(function ($barang) {
+                                    return [$barang->id => $barang->nama_barang . ' - ' . $barang->nomor_batch];
+                                });
+                            })
                             ->required()
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
