@@ -52,15 +52,29 @@ class BarangTransaksiResource extends Resource
                             ->label('Nama Barang')
                             ->required()
                             ->reactive()
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                $barangMaster = BarangMaster::find($state);
-                                if ($barangMaster) {
-                                    $set('harga_satuan', $barangMaster->harga_satuan);
-                                    $set('stock', $barangMaster->stock);
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                if ($state) {
+                                    $barangMaster = BarangMaster::find($state);
+                                    if ($barangMaster) {
+                                        $set('stock', $barangMaster->stock);
+                                        $set('harga_satuan', $barangMaster->harga_satuan);
+
+                                        // Hitung ulang total harga
+                                        $jumlah = $get('jumlah') ?? 0;
+                                        $set('total_harga', $barangMaster->harga_satuan * $jumlah);
+                                    }
+                                }
+                            })
+                            ->afterStateHydrated(function ($component, $state, callable $set) {
+                                if ($state) {
+                                    $barangMaster = BarangMaster::find($state);
+                                    if ($barangMaster) {
+                                        $set('stock', $barangMaster->stock);
+                                    }
                                 }
                             }),
 
-                        TextInput::make('stock')
+                            TextInput::make('stock')
                             ->label('Stock')
                             ->disabled()
                             ->numeric()
@@ -70,7 +84,11 @@ class BarangTransaksiResource extends Resource
                             ->label('Harga Satuan')
                             ->required()
                             ->numeric()
-                            ->reactive(),
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                $jumlah = $get('jumlah') ?? 0;
+                                $set('total_harga', $state * $jumlah);
+                            }),
 
                         TextInput::make('jumlah')
                             ->label('Jumlah')
@@ -78,20 +96,27 @@ class BarangTransaksiResource extends Resource
                             ->required()
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                $hargaSatuan = $get('harga_satuan');
+                                $hargaSatuan = $get('harga_satuan') ?? 0;
                                 $set('total_harga', $hargaSatuan * $state);
+                            })
+                            ->afterStateHydrated(function ($component, $state, callable $set, callable $get) {
+                                // Hitung ulang total harga saat form dimuat
+                                $hargaSatuan = $get('harga_satuan') ?? 0;
+                                $set('total_harga', $hargaSatuan * ($state ?? 0));
                             }),
 
                         TextInput::make('total_harga')
                             ->label('Total Harga')
                             ->disabled()
                             ->numeric()
-                            ->dehydrated()
-                            ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.')),
+                            ->formatStateUsing(function ($state) {
+                                return number_format($state, 2, ',', '.');
+                            })
+                            ->dehydrated(true),
                     ])
                     ->minItems(1)
                     ->defaultItems(1)
-                    ->createItemButtonLabel('Tambah Barang'),
+                    ->createItemButtonLabel('Tambah Barang')
             ]);
     }
 
