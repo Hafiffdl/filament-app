@@ -255,21 +255,21 @@
 
     <table>
         <tr>
-            <th rowspan="2">NO</th>
-            <th style="border: 1px solid black;" rowspan="2">NAMA<br>BARANG</th>
-            <th rowspan="2">JUMLAH</th>
-            <th rowspan="2">SATUAN</th>
+            <th rowspan="2" style="text-align: center;" >NO</th>
+            <th style="border: 1px solid black;" rowspan="2" style="text-align: center;">NAMA<br>BARANG</th>
+            <th rowspan="2" style="text-align: center;">JUMLAH</th>
+            <th rowspan="2" style="text-align: center;">SATUAN</th>
             <th colspan="2" style="text-align: center;">SPESIFIKASI</th>
             <th colspan="2" style="text-align: center;">HARGA</th>
-            <th rowspan="2">SUMBER DANA</th>
-            <th rowspan="2">TITIK PERMI<br>NTAAN DARU<br>RAT</th>
+            <th rowspan="2" style="text-align: center;">SUMBER DANA</th>
+            <th rowspan="2">TITIK PERMIN<br>TAAN DARU<br>RAT</th>
             <th rowspan="2">TITIK<br>STOK<br>REALO<br>KASI<br>TERKINI</th>
         </tr>
         <tr>
             <th>NOMOR BATCH</th>
-            <th>BATAS KADALUWARSA</th>
-            <th>HARGA SATUAN</th>
-            <th>TOTAL<br>NILAI<br>BARANG</th>
+            <th colspan="1" style="text-align: center;">BATAS<br>KADALU<br>WARSA</th>
+            <th colspan="1" style="text-align: center;">HARGA SATUAN</th>
+            <th colspan="1" style="text-align: center;">TOTAL<br>NILAI<br>BARANG</th>
         </tr>
         @foreach($suratKeluar->barangTransaksis as $transaksi)
             @foreach($transaksi->items as $item)
@@ -280,8 +280,8 @@
                     <td style="text-align: center">{{ $item->barangMaster->satuan }}</td>
                     <td class="nomor-batch" style="text-align: center;">{{ $item->barangMaster->nomor_batch }}</td>
                     <td style="text-align: center">{{ $item->barangMaster->kadaluarsa ? \Carbon\Carbon::parse($item->barangMaster->kadaluarsa)->format('Y/m/d') : 'N/A' }}</td>
-                    <td>Rp.{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
-                    <td>Rp.{{ number_format($item->total_harga, 2, ',', '.') }}</td>
+                    <td class= "right-align">Rp.{{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
+                    <td class= "right-align">Rp.{{ number_format($item->total_harga, 2, ',', '.') }}</td>
                     <td style="text-align: center">{{ $item->barangMaster->sumber_dana }}</td>
                     <td>{{ $item->titik_permintaan_darurat }}</td>
                     <td>{{ $item->titik_stok_realokasi }}</td>

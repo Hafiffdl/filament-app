@@ -191,12 +191,12 @@
 
     <table>
         <tr>
-            <th>NO</th>
-            <th>NAMA BARANG</th>
-            <th>JUMLAH BARANG</th>
-            <th>SATUAN / KEMASAN</th>
-            <th>HARGA SATUAN BARANG</th>
-            <th>JUMLAH</th>
+            <th colspan="1" style="text-align: center;">NO</th>
+            <th colspan="1" style="text-align: center;">NAMA BARANG</th>
+            <th colspan="1" style="text-align: center;">JUMLAH BARANG</th>
+            <th colspan="1" style="text-align: center;">SATUAN / KEMASAN</th>
+            <th colspan="1" style="text-align: center;">HARGA SATUAN<br>BARANG</th>
+            <th colspan="1" style="text-align: center;">JUMLAH</th>
         </tr>
         @foreach($suratSerahTerima->barangTransaksis as $transaksi)
             @foreach($transaksi->items as $item)
@@ -206,14 +206,14 @@
                     <td style="text-align: center;">{{ $item->jumlah }}</td>
                     <td style="text-align: center;">{{ $item->barangMaster->satuan }}</td>
                     <td style="text-align:right">Rp {{ number_format($item->barangMaster->harga_satuan, 2, ',', '.') }}</td>
-                    <td>Rp {{ number_format($item->total_harga, 2, ',', '.') }}</td>
+                    <td style="text-align: right;">Rp {{ number_format($item->total_harga, 2, ',', '.') }}</td>
                 </tr>
             @endforeach
         @endforeach
         <tr class="subtotal-row">
             <td colspan="2" class="subtotal-label">SUB TOTAL</td>
             <td colspan="3"></td>
-            <td>Rp {{ number_format($suratSerahTerima->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
+            <td style="text-align: right;">Rp {{ number_format($suratSerahTerima->barangTransaksis->flatMap(fn($transaksi) => $transaksi->items)->sum('total_harga'), 2, ',', '.') }}</td>
         </tr>
     </table>
 

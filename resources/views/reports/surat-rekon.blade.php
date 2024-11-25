@@ -190,12 +190,12 @@
 
     <table>
         <tr>
-            <th>NO</th>
-            <th>NAMA BARANG</th>
-            <th>JUMLAH BARANG</th>
-            <th>SATUAN / KEMASAN</th>
-            <th>HARGA SATUAN BARANG</th>
-            <th>JUMLAH</th>
+            <th colspan="1" style="text-align: center;">NO</th>
+            <th colspan="1" style="text-align: center;">NAMA BARANG</th>
+            <th colspan="1" style="text-align: center;">JUMLAH BARANG</th>
+            <th colspan="1" style="text-align: center;">SATUAN / KEMASAN</th>
+            <th colspan="1" style="text-align: center;">HARGA SATUAN<br>BARANG</th>
+            <th colspan="1" style="text-align: center;">JUMLAH</th>
         </tr>
         @php
             $groupedItems = $suratRekon->barangTransaksis->flatMap(function ($transaksi) {
@@ -228,13 +228,13 @@
                 <td style="text-align: center;">{{ $totalJumlah }}</td>
                 <td style="text-align: center;">{{ $group->first()['satuan'] }}</td>
                 <td style="text-align: right;">Rp {{ number_format($hargaSatuan, 2, ',', '.') }}</td>
-                <td>Rp {{ number_format($jumlahHarga, 2, ',', '.') }}</td>
+                <td style="text-align: right;">Rp {{ number_format($jumlahHarga, 2, ',', '.') }}</td>
             </tr>
         @endforeach
         <tr class="subtotal-row">
             <td colspan="2" class="subtotal-label">SUB TOTAL</td>
             <td colspan="3"></td>
-            <td>Rp {{ number_format($totalHarga, 2, ',', '.') }}</td>
+            <td style="text-align: right;">Rp {{ number_format($totalHarga, 2, ',', '.') }}</td>
         </tr>
     </table>
 
