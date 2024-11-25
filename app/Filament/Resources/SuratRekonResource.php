@@ -96,6 +96,7 @@ class SuratRekonResource extends Resource
                     ->url(fn (SuratRekon $record) => route('print.surat-rekon', $record->id))
                     ->openUrlInNewTab(),
             ])
+            ->actions([Tables\Actions\EditAction::make()])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 

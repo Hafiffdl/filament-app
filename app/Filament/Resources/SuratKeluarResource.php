@@ -198,6 +198,7 @@ class SuratKeluarResource extends Resource
                 ->url(fn (SuratKeluar $record) => route('print.surat-keluar', $record->id))
                 ->openUrlInNewTab(),
         ])
+        ->actions([Tables\Actions\EditAction::make()])
         ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
     }
 

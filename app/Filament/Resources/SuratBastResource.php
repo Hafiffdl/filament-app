@@ -178,7 +178,8 @@ class SuratBastResource extends Resource
                     ->url(fn (SuratBast $record) => route('print.surat-serah-terima', $record->id))
                     ->openUrlInNewTab(),
             ])
-            ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
+            ->bulkActions([Tables\Actions\DeleteBulkAction::make()])
+            ->actions([Tables\Actions\EditAction::make()]);
     }
 
     public static function getPages(): array
