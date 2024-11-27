@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
-    <img width="200px" height="200px" src="images/logosudinv2.png" alt="SUDIN PPAPP logo">
+    <img width="200px" height="200px" src="public/images/logosudinv2.png" alt="SUDIN PPAPP">
   </a>
 </p>
 
