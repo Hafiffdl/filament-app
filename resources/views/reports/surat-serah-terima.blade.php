@@ -192,9 +192,9 @@
     <table>
         <tr>
             <th colspan="1" style="text-align: center;">NO</th>
-            <th colspan="1" style="text-align: center;">NAMA BARANG</th>
-            <th colspan="1" style="text-align: center;">JUMLAH BARANG</th>
-            <th colspan="1" style="text-align: center;">SATUAN / KEMASAN</th>
+            <th colspan="1" style="text-align: center;">NAMA<br>BARANG</th>
+            <th colspan="1" style="text-align: center;">JUMLAH<br>BARANG</th>
+            <th colspan="1" style="text-align: center;">SATUAN</th>
             <th colspan="1" style="text-align: center;">HARGA SATUAN<br>BARANG</th>
             <th colspan="1" style="text-align: center;">JUMLAH</th>
         </tr>

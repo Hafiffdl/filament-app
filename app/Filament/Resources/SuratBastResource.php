@@ -21,7 +21,7 @@ class SuratBastResource extends Resource
     protected static ?string $model = SuratBast::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $pluralModelLabel = 'Surat BAST';
+    protected static ?string $pluralModelLabel = 'BAST';
 
     protected static ?string $modelLabel = 'Surat BAST';
 

@@ -91,6 +91,7 @@ class BarangTransaksiResource extends Resource
                             ->label('Harga Satuan')
                             ->required()
                             ->numeric()
+                            ->disabled()
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $jumlah = $get('jumlah') ?? 0;

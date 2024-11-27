@@ -22,7 +22,7 @@ class SuratRekonResource extends Resource
     protected static ?string $model = SuratRekon::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $pluralModelLabel = 'Surat Rekon';
+    protected static ?string $pluralModelLabel = 'BAST REKON';
     protected static ?string $modelLabel = 'Surat Rekon';
 
     public static function getNavigationSort(): ?int

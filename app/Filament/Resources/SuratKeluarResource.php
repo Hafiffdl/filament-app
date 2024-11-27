@@ -23,7 +23,7 @@ class SuratKeluarResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     // protected static ?string $modelLabel = 'Surat Keluar SBBK & BAST';
-    protected static ?string $pluralModelLabel = 'Surat SBBK';
+    protected static ?string $pluralModelLabel = 'SBBK';
 
     protected static ?string $modelLabel = 'Surat SBBK';
 
