@@ -1,9 +1,10 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://laravel.com/img/logomark.min.svg" alt="Laravel logo"></a>
+    <img width="200px" height="200px" src="public/images/logosudinv2.png" alt="SUDIN PPAPP">
+  </a>
 </p>
 
-<h3 align="center">System Alokon</h3>
+<h3 align="center">Digital application for contraceptive management at the PPAPP Sub-dept., East Jakarta</h3>
 
 <div align="center">
 
@@ -13,7 +14,7 @@
 </div>
 
 <p align="center"> 
-    Modern admin panel built with Laravel 11 and Filament, providing powerful content management capabilities with minimal dependencies.
+    System Alokon is a robust web-based application built using Laravel 11 and Filament 3, which provides a modern and scalable platform for managing goods transactions. It features a responsive design, a role-based access control system, and powerful data management tools. This system includes functionalities for recording incoming and outgoing goods transactions and offers seamless integration with a letter generation feature to streamline transaction documentation.
     <br> 
 </p>
 
@@ -30,7 +31,14 @@
 
 ## 🧐 About <a name = "about"></a>
 
-Modern web application built using Laravel 11 framework with Filament admin panel. This project provides a robust starting point for building content management systems with features like user management, role-based access control, and content publishing workflow
+System Alokon is developed to simplify and modernize the process of managing logistics within organizations. Built on the Laravel 11 framework, it leverages the power of Filament 3 for a user-friendly admin panel and MySQL for reliable data storage. The system is designed to handle the recording of incoming and outgoing goods, track transactions efficiently, and produce transaction letters in a standardized format. 
+
+Key technologies used include:
+- **Laravel 11**: A high-performance PHP framework for backend logic and data processing.
+- **Filament 3**: A lightweight and flexible admin panel for streamlined user and data management.
+- **MySQL**: A robust relational database for storing and retrieving transaction data.
+
+This application is suitable for organizations that require an efficient and secure solution to manage their goods logistics while offering scalability and customization for future enhancements.
 
 ## 💻 System Requirements <a name = "system_requirements"></a>
 
