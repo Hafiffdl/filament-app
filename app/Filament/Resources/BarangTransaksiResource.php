@@ -6,13 +6,11 @@ use App\Filament\Resources\BarangTransaksiResource\Pages;
 use App\Models\BarangMaster;
 use App\Models\BarangTransaksi;
 use App\Models\Faskes;
-use Exception;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -91,7 +89,6 @@ class BarangTransaksiResource extends Resource
                             ->label('Harga Satuan')
                             ->required()
                             ->numeric()
-                            ->disabled()
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $jumlah = $get('jumlah') ?? 0;
@@ -106,20 +103,11 @@ class BarangTransaksiResource extends Resource
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $hargaSatuan = $get('harga_satuan') ?? 0;
                                 $set('total_harga', $hargaSatuan * $state);
-
-                                $hargaSatuan = $get('harga_satuan');
-                                $barangMaster = BarangMaster::find($get('barang_master_id'));
-
-                                // Cek stok barang saat jumlah diubah
-                                if ($barangMaster && $barangMaster->stock < $state) {
-                                    Notification::make()
-                                        ->title('Stok Barang Tidak Cukup')
-                                        ->danger()
-                                        ->body("Stok barang '{$barangMaster->nama_barang}' tidak cukup. Stok saat ini: {$barangMaster->stock}.")
-                                        ->send();
-                                }
-
-                                $set('total_harga', $hargaSatuan * $state);
+                            })
+                            ->afterStateHydrated(function ($component, $state, callable $set, callable $get) {
+                                // Hitung ulang total harga saat form dimuat
+                                $hargaSatuan = $get('harga_satuan') ?? 0;
+                                $set('total_harga', $hargaSatuan * ($state ?? 0));
                             }),
 
                         TextInput::make('total_harga')
@@ -135,33 +123,6 @@ class BarangTransaksiResource extends Resource
                     ->defaultItems(1)
                     ->createItemButtonLabel('Tambah Barang')
             ]);
-    }
-
-    public static function beforeCreate($data)
-    {
-        // Loop through all items in the transaction and check stock
-        DB::beginTransaction();  // Mulai transaksi database
-        try {
-            foreach ($data['items'] as $item) {
-                $barangMaster = BarangMaster::find($item['barang_master_id']);
-                if ($barangMaster && $barangMaster->stock <= 0) {
-                    // Tampilkan notifikasi error
-                    Notification::make()
-                        ->title('Error Stok')
-                        ->danger()
-                        ->body("Stok barang '{$barangMaster->nama_barang}' habis. Transaksi tidak dapat dilanjutkan.")
-                        ->send();
-
-                    throw new Exception("Stok barang '{$barangMaster->nama_barang}' habis.");
-                }
-            }
-            // Jika stok mencukupi, commit transaksi database
-            DB::commit();
-        } catch (Exception $e) {
-            // Jika ada error, rollback transaksi dan tampilkan error
-            DB::rollBack();
-            throw new Exception($e->getMessage());
-        }
     }
 
     public static function table(Table $table): Table
